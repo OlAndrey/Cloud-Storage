@@ -1,9 +1,9 @@
 const App = () => {
   return (
-    <div className="app">
+    <div className='app'>
       <h1>Cloud Storage!!</h1>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
