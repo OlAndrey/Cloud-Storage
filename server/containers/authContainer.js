@@ -58,4 +58,27 @@ const login = async (req, res) => {
   }
 }
 
-module.exports = { register, login }
+const getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId)
+
+    if (!user) {
+      return res.status(406).json({
+        message: 'User not found!'
+      })
+    }
+
+    const token = jwt.sign(
+      {
+        id: user._id
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '1d' }
+    )
+    res.status(200).json({ token, user })
+  } catch (error) {
+    res.status(406).json({ message: 'No access' })
+  }
+}
+
+module.exports = { register, login, getMe }
