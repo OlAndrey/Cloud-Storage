@@ -17,7 +17,17 @@ const register = async (req, res) => {
     const newUser = new User({ name, email, password: hash })
     newUser
       .save()
-      .then((user) => res.status(200).json(user))
+      .then((user) => {
+        const token = jwt.sign(
+          {
+            id: user._id
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: '1d' }
+        )
+
+        res.status(200).json({ token, user })
+      })
       .catch((e) =>
         res.status(406).json({
           error: e,
