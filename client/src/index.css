@@ -23,3 +23,7 @@ input::-ms-reveal,
 input::-ms-clear {
   display: none;
 }
+
+.bg-default {
+  background: #232327;
+}

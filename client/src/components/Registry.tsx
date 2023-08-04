@@ -1,9 +1,15 @@
+import { useEffect } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import TextInput from './TextInput'
 import PasswordInput from './PasswordInput'
 import { IFormValues } from '../types/form'
+import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import Icon from './Icon'
+import { registerUser, resetError } from '../store/reducers/authSlice'
 
 const Registry = () => {
+  const { loading, userToken, error } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
 
   const {
     register,
@@ -13,21 +19,25 @@ const Registry = () => {
     mode: 'onChange',
   })
 
+  useEffect(() => {
+    if (error) dispatch(resetError())
+  }, [])
+
+  useEffect(() => {
+    if (userToken) console.log('Successfully')
+  }, [userToken])
 
   const onSubmit: SubmitHandler<IFormValues> = async (formData, e) => {
     e?.preventDefault()
-    console.log(formData)
+    const { email, password, name } = formData
+    dispatch(registerUser({ email, password, name }))
   }
 
   return (
-    <div className='flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8'>
-      <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
-        <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight'>
-          Registaration
-        </h2>
-      </div>
+    <div className='w-full sm:mx-auto sm:max-w-lg bg-zinc-900 rounded-2xl p-6 sm:px-11 sm:py-14'>
+      <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Registaration</h2>
 
-      <div className='mt-10 sm:mx-auto sm:w-full sm:max-w-sm'>
+      <div className='mt-10'>
         <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label htmlFor='name' className='block text-sm font-medium leading-6'>
@@ -77,13 +87,22 @@ const Registry = () => {
             </div>
           </div>
 
+          {error && (
+            <div className='flex flex-row items-start pt-1'>
+              <div className='flex h-5 flex-row items-center'>
+                <Icon name='WarningIcon' fill='#EA580C' size={[20, 20]} className='mr-1' />
+              </div>
+              <span className='font-base w-56 text-sm text-orange-600'>{error}</span>
+            </div>
+          )}
+
           <div>
             <button
               type='submit'
-              disabled={!isValid}
+              disabled={!isValid || loading}
               className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
             >
-              Create account
+              {loading ? 'Wait' : 'Create account'}
             </button>
           </div>
         </form>

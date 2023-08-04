@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import icons from '.././icons'
+import icons from '../icons'
 
 type IconPropsType = {
   name: string
