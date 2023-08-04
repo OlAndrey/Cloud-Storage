@@ -102,7 +102,8 @@ const Registry = () => {
               disabled={!isValid || loading}
               className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
             >
-              {loading ? 'Wait' : 'Create account'}
+              {loading && <Icon className='animate-spin mr-3' size={[16, 16]} name='SpinnerIcon' />}
+              Sign in
             </button>
           </div>
         </form>

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { loginUser } from '../actions/authActions'
-import { IRegisterUserValue, IUserInfo } from '../../types/auth'
+import { ILoginUserValue, IRegisterUserValue, IUserInfo } from '../../types/auth'
 import axios from '../../utils/axios'
 
 interface AuthState {
@@ -22,10 +21,7 @@ export const registerUser = createAsyncThunk(
   'auth/register',
   async ({ name, email, password }: IRegisterUserValue, { rejectWithValue }) => {
     try {
-      const res = await axios.post(
-        '/api/auth/registration',
-        { name, email, password }
-      )
+      const res = await axios.post('/api/auth/registration', { name, email, password })
 
       window.localStorage.setItem('userToken', res.data.token)
       return res.data
@@ -36,7 +32,25 @@ export const registerUser = createAsyncThunk(
         return rejectWithValue(error.message)
       }
     }
-  }
+  },
+)
+
+export const loginUser = createAsyncThunk(
+  'auth/login',
+  async ({ email, password }: ILoginUserValue, { rejectWithValue }) => {
+    try {
+      const res = await axios.post('/api/auth/login', { email, password })
+
+      window.localStorage.setItem('userToken', res.data.token)
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message)
+      } else {
+        return rejectWithValue(error.message)
+      }
+    }
+  },
 )
 
 const authSlice = createSlice({
