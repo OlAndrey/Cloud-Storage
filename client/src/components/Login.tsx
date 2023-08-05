@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import TextInput from './TextInput'
 import PasswordInput from './PasswordInput'
@@ -97,9 +98,12 @@ const Login = () => {
 
         <p className='mt-10 text-center text-sm text-gray-500'>
           Don&apos;t have an account?{' '}
-          <a href='#' className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'>
+          <Link
+            to='/registration'
+            className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
+          >
             Create account
-          </a>
+          </Link>
         </p>
       </div>
     </div>
