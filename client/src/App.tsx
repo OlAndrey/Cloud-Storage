@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './components/Login'
 import Registry from './components/Registry'
+import Main from './components/Main'
 import Header from './components/Header'
 
 const App = () => {
@@ -8,6 +9,7 @@ const App = () => {
     <div className='h-screen bg-default text-white'>
       <Header />
       <Routes>
+        <Route path='/' element={<Main />} />
         <Route path='/login' element={<Login />} />
         <Route path='/registration' element={<Registry />} />
         <Route path='/*' element={<Navigate to='/login' replace={true} />} />

@@ -35,89 +35,98 @@ const Registry = () => {
   }
 
   return (
-    <div className='w-full sm:mx-auto sm:max-w-lg bg-zinc-900 rounded-2xl p-6 sm:px-11 sm:py-14'>
-      <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Registaration</h2>
+    <div className='h-full container mx-auto px-4'>
+      <div className='flex min-h-full flex-col justify-center items-center'>
+        <div className='w-full sm:mx-auto sm:max-w-lg bg-zinc-900 rounded-2xl p-6 sm:px-11 sm:py-14'>
+          <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Registaration</h2>
 
-      <div className='mt-10'>
-        <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <label htmlFor='name' className='block text-sm font-medium leading-6'>
-              <span>Your name</span>
-            </label>
-            <div className='mt-2'>
-              <TextInput
-                placeholder='Name'
-                label='name'
-                type='text'
-                register={register}
-                minLength={{ value: 1, message: 'Email must not be empty' }}
-                error={errors.email}
-              />
-            </div>
-          </div>
-          <div>
-            <label htmlFor='email' className='block text-sm font-medium leading-6'>
-              <span>Email address</span>
-            </label>
-            <div className='mt-2'>
-              <TextInput
-                placeholder='Email'
-                label='email'
-                type='email'
-                register={register}
-                pattern={{ value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/, message: 'Email is not valid' }}
-                minLength={{ value: 1, message: 'Email must not be empty' }}
-                error={errors.email}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor='password' className='block text-sm font-medium leading-6'>
-              Password
-            </label>
-            <div className='mt-2'>
-              <PasswordInput
-                placeholder={'Password'}
-                label='password'
-                register={register}
-                required={true}
-                minLength={{ value: 8, message: 'Password should be at-least 8 characters.' }}
-                error={errors.password}
-              />
-            </div>
-          </div>
-
-          {error && (
-            <div className='flex flex-row items-start pt-1'>
-              <div className='flex h-5 flex-row items-center'>
-                <Icon name='WarningIcon' fill='#EA580C' size={[20, 20]} className='mr-1' />
+          <div className='mt-10'>
+            <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+              <div>
+                <label htmlFor='name' className='block text-sm font-medium leading-6'>
+                  <span>Your name</span>
+                </label>
+                <div className='mt-2'>
+                  <TextInput
+                    placeholder='Name'
+                    label='name'
+                    type='text'
+                    register={register}
+                    minLength={{ value: 1, message: 'Email must not be empty' }}
+                    error={errors.email}
+                  />
+                </div>
               </div>
-              <span className='font-base w-56 text-sm text-orange-600'>{error}</span>
-            </div>
-          )}
+              <div>
+                <label htmlFor='email' className='block text-sm font-medium leading-6'>
+                  <span>Email address</span>
+                </label>
+                <div className='mt-2'>
+                  <TextInput
+                    placeholder='Email'
+                    label='email'
+                    type='email'
+                    register={register}
+                    pattern={{
+                      value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+                      message: 'Email is not valid',
+                    }}
+                    minLength={{ value: 1, message: 'Email must not be empty' }}
+                    error={errors.email}
+                  />
+                </div>
+              </div>
 
-          <div>
-            <button
-              type='submit'
-              disabled={!isValid || loading}
-              className='flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-            >
-              {loading && <Icon className='animate-spin mr-3' size={[16, 16]} name='SpinnerIcon' />}
-              Sign in
-            </button>
+              <div>
+                <label htmlFor='password' className='block text-sm font-medium leading-6'>
+                  Password
+                </label>
+                <div className='mt-2'>
+                  <PasswordInput
+                    placeholder={'Password'}
+                    label='password'
+                    register={register}
+                    required={true}
+                    minLength={{ value: 8, message: 'Password should be at-least 8 characters.' }}
+                    error={errors.password}
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div className='flex flex-row items-start pt-1'>
+                  <div className='flex h-5 flex-row items-center'>
+                    <Icon name='WarningIcon' fill='#EA580C' size={[20, 20]} className='mr-1' />
+                  </div>
+                  <span className='font-base w-56 text-sm text-orange-600'>{error}</span>
+                </div>
+              )}
+
+              <div>
+                <button
+                  type='submit'
+                  disabled={!isValid || loading}
+                  className='flex w-full justify-center items-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 disabled:bg-zinc-400'
+                >
+                  {loading && (
+                    <Icon className='animate-spin mr-3' size={[16, 16]} name='SpinnerIcon' />
+                  )}
+                  Sign in
+                </button>
+              </div>
+            </form>
+
+            <p className='mt-10 text-center text-sm text-gray-500'>
+              Already have an account?{' '}
+              <Link
+                to='/login'
+                className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
+              >
+                Log In
+              </Link>
+            </p>
           </div>
-        </form>
-
-        <p className='mt-10 text-center text-sm text-gray-500'>
-          Already have an account?{' '}
-          <Link
-            to='/login'
-            className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
-          >
-            Log In
-          </Link>
-        </p>
+        </div>
       </div>
     </div>
   )
