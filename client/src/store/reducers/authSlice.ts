@@ -5,6 +5,7 @@ import axios from '../../utils/axios'
 
 interface AuthState {
   loading: boolean
+  authCheck: boolean
   userInfo: IUserInfo | null
   userToken: string | null
   error: string | null
@@ -12,6 +13,7 @@ interface AuthState {
 
 const initialState: AuthState = {
   loading: false,
+  authCheck: false,
   userInfo: null,
   userToken: null,
   error: 'Error',
@@ -53,12 +55,30 @@ export const loginUser = createAsyncThunk(
   },
 )
 
+export const authCheckThunk = createAsyncThunk('auth/check', async (_, { rejectWithValue }) => {
+  try {
+    const res = await axios.get('/api/auth/me')
+
+    window.localStorage.setItem('userToken', res.data.token)
+    return res.data
+  } catch (error: any) {
+    if (error.response && error.response.data.message) {
+      return rejectWithValue(error.response.data.message)
+    } else {
+      return rejectWithValue(error.message)
+    }
+  }
+})
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     resetError: (state) => {
       state.error = null
+    },
+    authChecked: (state) => {
+      state.authCheck = true
     },
   },
   extraReducers: (builder) => {
@@ -96,9 +116,22 @@ const authSlice = createSlice({
         state.loading = false
         state.error = errorMsg as string
       })
+
+    builder
+      .addCase(authCheckThunk.pending, () => undefined)
+      .addCase(authCheckThunk.fulfilled, (state, action) => {
+        const { user, token } = action.payload
+
+        state.authCheck = true
+        state.userInfo = user
+        state.userToken = token
+      })
+      .addCase(authCheckThunk.rejected, (state) => {
+        state.authCheck = true
+      })
   },
 })
 
-export const { resetError } = authSlice.actions
+export const { authChecked, resetError } = authSlice.actions
 
 export default authSlice.reducer
