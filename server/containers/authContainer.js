@@ -1,6 +1,8 @@
-const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
+const File = require('../models/File')
+const fileServices = require('../services/FileServices')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -15,9 +17,14 @@ const register = async (req, res) => {
     const salt = 5
     const hash = await bcrypt.hash(password, salt)
     const newUser = new User({ name, email, password: hash })
-    newUser
-      .save()
-      .then((user) => {
+
+    try {
+      const file = new File({ user: newUser._id, name: '' })
+      await fileServices.createDir(file)
+
+      try {
+        const user = await newUser.save()
+
         const token = jwt.sign(
           {
             id: user._id
@@ -27,14 +34,17 @@ const register = async (req, res) => {
         )
 
         res.status(200).json({ token, user })
-      })
-      .catch((e) =>
+      } catch (e) {
         res.status(406).json({
           error: e,
           message: 'The email address is already in use by another account'
         })
-      )
+      }
+    } catch (error) {
+      res.status(500).json(error)
+    }
   } catch (e) {
+    console.log(e)
     error(req, res)
   }
 }

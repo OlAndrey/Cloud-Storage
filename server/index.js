@@ -4,6 +4,7 @@ const dotenv = require('dotenv')
 const cors = require('cors')
 const http = require('http')
 const authRoute = require('./routes/auth')
+const fileRoute = require('./routes/file')
 
 const app = express()
 dotenv.config()
@@ -16,6 +17,7 @@ app.use(
 app.use(express.json())
 
 app.use('/api/auth', authRoute)
+app.use('/api/file', fileRoute)
 
 const port = process.env.PORT || 5001
 const server = http.createServer(app)
