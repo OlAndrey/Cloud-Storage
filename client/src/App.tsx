@@ -14,7 +14,7 @@ const App = () => {
 
   useEffect(() => {
     if (!authCheck) {
-      const userToken = window.localStorage.getItem('UserToken')
+      const userToken = window.localStorage.getItem('userToken')
       if (userToken) dispatch(authCheckThunk())
       else dispatch(authChecked())
     }
