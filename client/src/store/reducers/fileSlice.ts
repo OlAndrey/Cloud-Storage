@@ -21,19 +21,22 @@ const initialState: FileState = {
   view: 'list',
 }
 
-export const getFilesFromDir = createAsyncThunk('file/getFiles', async (_, { rejectWithValue }) => {
-  try {
-    const res = await axios.get(`/api/file`)
+export const getFilesFromDir = createAsyncThunk(
+  'file/getFiles',
+  async (dirId: string | undefined, { rejectWithValue }) => {
+    try {
+      const res = await axios.get(`/api/file${dirId ? '?parent=' + dirId : ''}`)
 
-    return res.data
-  } catch (error: any) {
-    if (error.response && error.response.data.message) {
-      return rejectWithValue(error.response.data.message)
-    } else {
-      return rejectWithValue(error.message)
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message)
+      } else {
+        return rejectWithValue(error.message)
+      }
     }
-  }
-})
+  },
+)
 
 const fileSlice = createSlice({
   name: 'file',

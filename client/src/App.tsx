@@ -31,7 +31,9 @@ const App = () => {
         </div>
       ) : userInfo ? (
         <Routes>
-          <Route path='/*' element={<Main />} />
+          <Route path='/drive/folders/:id' element={<Main />} />
+          <Route path='/drive' element={<Main />} />
+          <Route path='/*' element={<Navigate to='/drive' replace={true} />} />
         </Routes>
       ) : (
         <Routes>
