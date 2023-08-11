@@ -1,8 +1,9 @@
 export interface IFile {
     name: string
     type: 'file' | 'dir'
-    created: Date
-    modified: Date
+    user: string
+    createdAt: string
+    updatedAt: string
     size?: number
     accessLink: string
 }

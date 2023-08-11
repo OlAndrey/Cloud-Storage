@@ -13,8 +13,15 @@ interface AuthState {
 
 const initialState: AuthState = {
   loading: false,
-  authCheck: false,
-  userInfo: null,
+  authCheck: true,
+  userInfo: {
+    _id: '64d3aa32bf8f7f96d196ff96',
+    name: 'Andrey',
+    email: 'fortest1@test.com',
+    diskSpace: 10737418240,
+    usedSpace: 0,
+    files: [],
+  },
   userToken: null,
   error: 'Error',
 }
