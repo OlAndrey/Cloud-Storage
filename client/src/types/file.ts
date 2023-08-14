@@ -7,3 +7,8 @@ export interface IFile {
     size?: number
     accessLink: string
 }
+
+export interface ICreatedFolder {
+    name: string
+    parent: string
+}

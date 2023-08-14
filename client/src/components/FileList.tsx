@@ -2,8 +2,9 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 import FileView from './FileView'
-import { getFilesFromDir } from '../store/reducers/fileSlice'
+import { getFilesFromDir, setPopupDisplay } from '../store/reducers/fileSlice'
 import Icon from './Icon'
+import Popup from './PopUp'
 
 const FileList = () => {
   const { loading, error, files, currentDir } = useAppSelector((state) => state.drive)
@@ -16,11 +17,17 @@ const FileList = () => {
     else dispatch(getFilesFromDir())
   }, [])
 
+  const handlerCreateDir = () => {
+    dispatch(setPopupDisplay('flex'))
+  }
+
   return (
     <div className='pt-14'>
       {error ? (
         <div className='h-full flex items-center'>
-          <div className='w-screen -ml-14 flex justify-center items-center font-medium text-lg'>{error}</div>
+          <div className='w-screen -ml-14 flex justify-center items-center font-medium text-lg'>
+            {error}
+          </div>
         </div>
       ) : loading ? (
         <div className='h-full flex items-center'>
@@ -33,7 +40,7 @@ const FileList = () => {
           {userInfo?._id === (files.length && files[0].user) ? (
             <div className='pt-3 px-2 md:px-4 flex justify-between items-center'>
               <div className=''>{currentDir}</div>
-              <div className=''>
+              <div onClick={() => handlerCreateDir()}>
                 <Icon name='FolderPlusIcon' fill='#ffffff' size={[32, 32]} />
               </div>
             </div>
@@ -53,6 +60,7 @@ const FileList = () => {
           )}
         </>
       )}
+      <Popup />
     </div>
   )
 }
