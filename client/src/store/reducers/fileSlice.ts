@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ICreatedFolder, IFile } from '../../types/file'
+import { ICreatedFolder, IDir, IFile } from '../../types/file'
 import axios from '../../utils/axios'
 
 interface FileState {
   loading: boolean
   error: string
+  isOwnFolder: boolean
   files: IFile[]
   currentDir: string
-  dirStack: unknown
+  dirStack: IDir[]
   view: string
   popUpDisplay: 'none' | 'flex'
 }
@@ -16,6 +17,7 @@ interface FileState {
 const initialState: FileState = {
   loading: false,
   error: '',
+  isOwnFolder: false,
   files: [],
   currentDir: '',
   dirStack: [],
@@ -76,11 +78,13 @@ const fileSlice = createSlice({
         state.error = ''
       })
       .addCase(getFilesFromDir.fulfilled, (state, action) => {
-        const { files } = action.payload
+        const { files, isOwn, currentDir, stackDir } = action.payload
 
         state.loading = false
         state.files = files
-        state.currentDir = 'drive'
+        state.currentDir = currentDir ? currentDir._id : ''
+        state.isOwnFolder = isOwn
+        state.dirStack = [{ id: null, name: 'Drive' }, ...stackDir]
       })
       .addCase(getFilesFromDir.rejected, (state, action) => {
         const errorMsg = action.payload ? action.payload : ''
@@ -94,7 +98,7 @@ const fileSlice = createSlice({
         const file = action.payload?.file
 
         state.loading = false
-        state.files = file ? [...state.files, file]: state.files
+        state.files = file ? [...state.files, file] : state.files
       })
       .addCase(createDir.rejected, () => undefined)
   },

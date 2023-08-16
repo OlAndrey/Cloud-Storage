@@ -1,4 +1,5 @@
 export interface IFile {
+    _id: string
     name: string
     type: 'file' | 'dir'
     user: string
@@ -6,6 +7,11 @@ export interface IFile {
     updatedAt: string
     size?: number
     accessLink: string
+}
+
+export interface IDir {
+    id: string | null
+    name: string
 }
 
 export interface ICreatedFolder {

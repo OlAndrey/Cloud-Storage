@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { IFile } from '../types/file'
 import Icon from './Icon'
 
@@ -11,7 +12,7 @@ const FileView = ({ file }: { file: IFile }) => {
           fill='#ffffff'
         />
       </div>
-      <div className='col-start-3 md:col-start-2 col-end-7'>{file.name}</div>
+      <div className='col-start-3 md:col-start-2 col-end-7'><Link to={`/drive/folders/${file._id}`}>{file.name}</Link></div>
       <div className='col-start-7 col-end-11'>
         {file.updatedAt.slice(0, 10)}
       </div>
