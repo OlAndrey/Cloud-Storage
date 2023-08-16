@@ -1,14 +1,14 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { SubmitHandler, useForm } from 'react-hook-form'
-import TextInput from './TextInput'
-import PasswordInput from './PasswordInput'
-import { IFormValues } from '../types/form'
-import Icon from './Icon'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-import { loginUser, resetError } from '../store/reducers/authSlice'
+import TextInput from '../inputs/TextInput'
+import PasswordInput from '../inputs/PasswordInput'
+import { IFormValues } from '../../types/form'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import Icon from '../icon/Icon'
+import { registerUser, resetError } from '../../store/reducers/authSlice'
 
-const Login = () => {
+const Registry = () => {
   const { loading, userToken, error } = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch()
 
@@ -30,27 +30,40 @@ const Login = () => {
 
   const onSubmit: SubmitHandler<IFormValues> = async (formData, e) => {
     e?.preventDefault()
-    const { email, password } = formData
-
-    console.log(formData)
-    dispatch(loginUser({ email, password }))
+    const { email, password, name } = formData
+    dispatch(registerUser({ email, password, name }))
   }
 
   return (
     <div className='h-full container mx-auto px-4'>
       <div className='flex min-h-full flex-col justify-center items-center'>
         <div className='w-full sm:mx-auto sm:max-w-lg bg-zinc-900 rounded-2xl p-6 sm:px-11 sm:py-14'>
-          <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Log In</h2>
+          <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Registaration</h2>
 
           <div className='mt-10'>
             <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
+              <div>
+                <label htmlFor='name' className='block text-sm font-medium leading-6'>
+                  <span>Your name</span>
+                </label>
+                <div className='mt-2'>
+                  <TextInput
+                    placeholder='Name'
+                    label='name'
+                    type='text'
+                    register={register}
+                    minLength={{ value: 1, message: 'Email must not be empty' }}
+                    error={errors.email}
+                  />
+                </div>
+              </div>
               <div>
                 <label htmlFor='email' className='block text-sm font-medium leading-6'>
                   <span>Email address</span>
                 </label>
                 <div className='mt-2'>
                   <TextInput
-                    placeholder='email'
+                    placeholder='Email'
                     label='email'
                     type='email'
                     register={register}
@@ -74,7 +87,7 @@ const Login = () => {
                     label='password'
                     register={register}
                     required={true}
-                    minLength={{ value: 1, message: 'Password must not be empty' }}
+                    minLength={{ value: 8, message: 'Password should be at-least 8 characters.' }}
                     error={errors.password}
                   />
                 </div>
@@ -104,12 +117,12 @@ const Login = () => {
             </form>
 
             <p className='mt-10 text-center text-sm text-gray-500'>
-              Don&apos;t have an account?{' '}
+              Already have an account?{' '}
               <Link
-                to='/registration'
+                to='/login'
                 className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'
               >
-                Create account
+                Log In
               </Link>
             </p>
           </div>
@@ -119,4 +132,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Registry

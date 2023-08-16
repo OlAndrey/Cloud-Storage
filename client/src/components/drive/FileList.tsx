@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { getFilesFromDir, setPopupDisplay } from '../store/reducers/fileSlice'
-import Icon from './Icon'
+import { getFilesFromDir, setPopupDisplay } from '../../store/reducers/fileSlice'
+import Icon from '../icon/Icon'
 import Popup from './PopUp'
 
 const FileList = () => {

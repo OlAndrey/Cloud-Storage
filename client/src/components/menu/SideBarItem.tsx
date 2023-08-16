@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import Icon from './Icon'
+import Icon from '../icon/Icon'
 
 interface SidenavItemProps {
   label: string

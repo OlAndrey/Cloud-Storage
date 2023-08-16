@@ -1,7 +1,7 @@
 import { FC, useState } from 'react'
 import { FieldError, Path, UseFormRegister, ValidationRule } from 'react-hook-form'
-import { IFormValues } from '../types/form'
-import Icon from './Icon'
+import { IFormValues } from '../../types/form'
+import Icon from '../icon/Icon'
 
 interface InputProps {
   label: Path<IFormValues>

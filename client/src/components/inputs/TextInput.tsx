@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { FieldError, Path, UseFormRegister, ValidationRule } from 'react-hook-form'
-import { IFormValues } from '../types/form'
+import { IFormValues } from '../../types/form'
 
 interface InputProps {
   label: Path<IFormValues>

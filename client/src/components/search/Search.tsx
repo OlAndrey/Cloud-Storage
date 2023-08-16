@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import Icon from './Icon'
+import Icon from '../icon/Icon'
 
 type SearchPropsType = {
   handler?: () => void

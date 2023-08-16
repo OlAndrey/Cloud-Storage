@@ -1,5 +1,5 @@
 import FileList from './FileList'
-import SideBar from './SideBar'
+import SideBar from '../menu/SideBar'
 
 const Main = () => {
   return (

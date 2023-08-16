@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import Icon from './Icon'
-import { useAppSelector } from '../hooks/redux'
-import Search from './Search'
+import Icon from '../icon/Icon'
+import { useAppSelector } from '../../hooks/redux'
+import Search from '../search/Search'
 
 const Header = () => {
   const { userInfo } = useAppSelector((state) => state.auth)

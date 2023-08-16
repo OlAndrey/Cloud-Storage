@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
-import { IFile } from '../types/file'
-import Icon from './Icon'
+import { IFile } from '../../types/file'
+import Icon from '../icon/Icon'
 
 const FileView = ({ file }: { file: IFile }) => {
   return (
