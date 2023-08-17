@@ -14,6 +14,11 @@ export interface IDir {
     name: string
 }
 
+export interface IUploadFile {
+    file: File
+    dirId?: string
+}
+
 export interface ICreatedFolder {
     name: string
     parent: string

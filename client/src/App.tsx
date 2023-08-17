@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import Login from './components/Login'
-import Registry from './components/Registry'
-import Main from './components/Main'
-import Header from './components/Header'
 import { useAppDispatch, useAppSelector } from './hooks/redux'
 import { authCheckThunk, authChecked } from './store/reducers/authSlice'
-import Icon from './components/Icon'
+import Login from './components/authorization/Login'
+import Registry from './components/authorization/Registry'
+import Main from './components/drive/Main'
+import Header from './components/header/Header'
+import Icon from './components/icon/Icon'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)

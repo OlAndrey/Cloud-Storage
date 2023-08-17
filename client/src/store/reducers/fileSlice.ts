@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ICreatedFolder, IDir, IFile } from '../../types/file'
+import { ICreatedFolder, IUploadFile, IDir, IFile } from '../../types/file'
 import axios from '../../utils/axios'
 
 interface FileState {
@@ -63,6 +63,28 @@ export const createDir = createAsyncThunk(
   },
 )
 
+export const uploadFile = createAsyncThunk(
+  'file/uploadFile',
+  async({file, dirId }: IUploadFile)=> {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      if (dirId) {
+          formData.append('parent', dirId)
+      }
+      const res = await axios.post('/api/file/upload', formData)
+
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return alert(error.response.data.message)
+      } else {
+        return alert(error.message)
+      }
+    }
+  }
+)
+
 const fileSlice = createSlice({
   name: 'file',
   initialState,
@@ -101,6 +123,16 @@ const fileSlice = createSlice({
         state.files = file ? [...state.files, file] : state.files
       })
       .addCase(createDir.rejected, () => undefined)
+      
+    builder
+    .addCase(uploadFile.pending, () => undefined)
+    .addCase(uploadFile.fulfilled, (state, action) => {
+      const file = action.payload?.file
+
+      state.loading = false
+      state.files = file ? [...state.files, file] : state.files
+    })
+    .addCase(uploadFile.rejected, () => undefined)
   },
 })
 
