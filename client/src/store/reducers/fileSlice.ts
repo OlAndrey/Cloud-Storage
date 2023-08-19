@@ -65,14 +65,19 @@ export const createDir = createAsyncThunk(
 
 export const uploadFile = createAsyncThunk(
   'file/uploadFile',
-  async({file, dirId }: IUploadFile)=> {
+  async ({ file, dirId }: IUploadFile) => {
     try {
       const formData = new FormData()
       formData.append('file', file)
       if (dirId) {
-          formData.append('parent', dirId)
+        formData.append('parent', dirId)
       }
-      const res = await axios.post('/api/file/upload', formData)
+
+      const res = await axios.post('/api/file/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
 
       return res.data
     } catch (error: any) {
@@ -82,7 +87,7 @@ export const uploadFile = createAsyncThunk(
         return alert(error.message)
       }
     }
-  }
+  },
 )
 
 const fileSlice = createSlice({
@@ -123,16 +128,16 @@ const fileSlice = createSlice({
         state.files = file ? [...state.files, file] : state.files
       })
       .addCase(createDir.rejected, () => undefined)
-      
-    builder
-    .addCase(uploadFile.pending, () => undefined)
-    .addCase(uploadFile.fulfilled, (state, action) => {
-      const file = action.payload?.file
 
-      state.loading = false
-      state.files = file ? [...state.files, file] : state.files
-    })
-    .addCase(uploadFile.rejected, () => undefined)
+    builder
+      .addCase(uploadFile.pending, () => undefined)
+      .addCase(uploadFile.fulfilled, (state, action) => {
+        const file = action.payload?.file
+
+        state.loading = false
+        state.files = file ? [...state.files, file] : state.files
+      })
+      .addCase(uploadFile.rejected, () => undefined)
   },
 })
 

@@ -1,3 +1,4 @@
+import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
@@ -6,6 +7,7 @@ import Icon from '../icon/Icon'
 import Popup from './PopUp'
 
 const FileList = () => {
+  const [dragEnter, setDragEnter] = useState(false)
   const { isOwnFolder, currentDir, files, dirStack } = useAppSelector((state) => state.drive)
   const dispatch = useAppDispatch()
 
@@ -13,15 +15,40 @@ const FileList = () => {
     dispatch(setPopupDisplay('flex'))
   }
 
-  const handlerFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlerFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e?.target?.files) {
       const files = [...e.target.files]
       files.forEach((file) => dispatch(uploadFile({ file, dirId: currentDir })))
     }
   }
 
-  return (
-    <>
+  const dragEnterHandler = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setDragEnter(true)
+  }
+
+  const dragLeaveHandler = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    setDragEnter(false)
+  }
+
+  const dropHandler = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault()
+    event.stopPropagation()
+    const files = [...event.dataTransfer.files]
+    files.forEach((file) => dispatch(uploadFile({ file, dirId: currentDir })))
+    setDragEnter(false)
+  }
+
+  return !dragEnter ? (
+    <div
+      className='h-full'
+      onDragEnter={dragEnterHandler}
+      onDragLeave={dragLeaveHandler}
+      onDragOver={dragEnterHandler}
+    >
       {isOwnFolder ? (
         <div className='pt-3 px-2 md:px-4 flex justify-between items-center'>
           <div className='flex flex-wrap flex-grow'>
@@ -74,7 +101,17 @@ const FileList = () => {
       )}
 
       <Popup />
-    </>
+    </div>
+  ) : (
+    <div
+      className='h-100-1em m-2 -mb-4 border-2 border-blue-500 rounded bg-blue-500/25 flex direction-column items-center'
+      onDrop={dropHandler}
+      onDragEnter={dragEnterHandler}
+      onDragLeave={dragLeaveHandler}
+      onDragOver={dragEnterHandler}
+    >
+      <div className='w-full flex justify-center'>Drag files here</div>
+    </div>
   )
 }
 

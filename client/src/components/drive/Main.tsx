@@ -19,16 +19,16 @@ const Main = () => {
   return (
     <div className='w-screen flex'>
       <SideBar />
-      <div className='pt-14 grow'>
+      <div className='w-full pt-14 grow'>
         {error ? (
           <div className='h-full flex items-center'>
-            <div className='w-screen -ml-14 flex justify-center items-center font-medium text-lg'>
+            <div className='w-full -ml-14 flex justify-center items-center font-medium text-lg'>
               {error}
             </div>
           </div>
         ) : loading ? (
           <div className='h-full flex items-center'>
-            <div className='w-screen -ml-14 flex justify-center items-center'>
+            <div className='w-full -ml-14 flex justify-center items-center'>
               <Icon
                 className='animate-spin mr-3'
                 size={[64, 64]}
