@@ -39,7 +39,6 @@ const createDir = async (req, res) => {
 const uploadFile = async (req, res) => {
   try {
     const file = req.files.file
-    console.log('file', file)
     const { parent } = req.body
     const currentDir = parent ? await File.findOne({ _id: parent }) : null
 
@@ -50,12 +49,16 @@ const uploadFile = async (req, res) => {
     if (user.usedSpace + file.size > user.diskSpace)
       return res.status(400).json({ message: 'There is not enough space on the disk' })
 
-    let filePath
-    if (!currentDir) filePath = path.join(__dirname, '../', 'files', req.userId, file.name)
-    else filePath = path.join(__dirname, '../', 'files', req.userId, currentDir.path, file.name)
+    let filePath, pathToFile
+    if (!currentDir) {
+      pathToFile = file.name
+      filePath = path.join(__dirname, '../', 'files', req.userId, file.name)
+    } else {
+      pathToFile = path.join(currentDir.path, file.name)
+      filePath = path.join(__dirname, '../', 'files', req.userId, currentDir.path, file.name)
+    }
 
-    
-    if (fs.existsSync(filePath)) return res.status(400).json({message: 'File already exist!'})
+    if (fs.existsSync(filePath)) return res.status(400).json({ message: 'File already exist!' })
 
     user.usedSpace += file.size
     file.mv(filePath)
@@ -64,15 +67,15 @@ const uploadFile = async (req, res) => {
       name: file.name,
       type: 'file',
       size: file.size,
-      path: currentDir?.path,
+      path: pathToFile,
       parent: currentDir?._id,
       user: user._id
-    }) 
+    })
 
     await dbFile.save()
     await user.save()
 
-    return res.status(200).json({ message: 'File was upload!'})
+    return res.status(200).json({ file: dbFile })
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Upload error' })
@@ -102,4 +105,21 @@ const getFiles = async (req, res) => {
   }
 }
 
-module.exports = { createDir, uploadFile, getFiles }
+const deleteFile = async (req, res) => {
+  try {
+    const file = await File.findOne({ _id: req.query.id, user: req.userId })
+    if (!file) {
+      return res.status(400).json({ message: 'file not found' })
+    }
+
+    fileServices.deleteFile(file)
+    await file.deleteOne()
+
+    return res.json({ message: 'File was deleted' })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ message: 'Delete error' })
+  }
+}
+
+module.exports = { createDir, uploadFile, getFiles, deleteFile }
