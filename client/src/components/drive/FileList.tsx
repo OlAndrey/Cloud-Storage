@@ -2,13 +2,16 @@ import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
+import { deleteFile, setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
 
 const FileList = () => {
+  const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
   const [dragEnter, setDragEnter] = useState(false)
-  const { isOwnFolder, currentDir, files, dirStack } = useAppSelector((state) => state.drive)
+  const { isOwnFolder, deleteLoading, currentDir, files, dirStack } = useAppSelector(
+    (state) => state.drive,
+  )
   const dispatch = useAppDispatch()
 
   const handlerCreateDir = () => {
@@ -40,6 +43,18 @@ const FileList = () => {
     const files = [...event.dataTransfer.files]
     files.forEach((file) => dispatch(uploadFile({ file, dirId: currentDir })))
     setDragEnter(false)
+  }
+
+  const handlerSelect = (fileId: string) => {
+    if (selectedFilesId.includes(fileId)) {
+      setSelectedFilesId(selectedFilesId.filter((selectFile) => selectFile !== fileId))
+    } else {
+      setSelectedFilesId([...selectedFilesId, fileId])
+    }
+  }
+
+  const handlerDelete = () => {
+    selectedFilesId.forEach((id) => dispatch(deleteFile(id)))
   }
 
   return !dragEnter ? (
@@ -81,9 +96,18 @@ const FileList = () => {
               className='hidden'
             />
           </label>
-          <div onClick={() => handlerCreateDir()}>
+          <div className='mx-2' onClick={handlerCreateDir}>
             <Icon name='FolderPlusIcon' fill='#ffffff' size={[32, 32]} />
           </div>
+          {!!selectedFilesId.length && (
+            <button
+              className='px-2 border-l-2 border-gray-900 transition duration-150 ease-in-out'
+              disabled={deleteLoading}
+              onClick={handlerDelete}
+            >
+              <Icon name='TrashIcon' fill='#ffffff' size={[28, 28]} />
+            </button>
+          )}
         </div>
       ) : (
         ''
@@ -95,7 +119,14 @@ const FileList = () => {
         <div className='col-start-11'>Size</div>
       </div>
       {files.length ? (
-        files.map((file, index) => <FileView file={file} key={index} />)
+        files.map((file, index) => (
+          <FileView
+            file={file}
+            key={index}
+            isSelected={selectedFilesId.includes(file._id)}
+            handlerSelect={handlerSelect}
+          />
+        ))
       ) : (
         <div className='pt-3 px-2 md:px-4 text-center'>The folder is empty!</div>
       )}
