@@ -56,6 +56,8 @@ const uploadFile = async (req, res) => {
     } else {
       pathToFile = path.join(currentDir.path, file.name)
       filePath = path.join(__dirname, '../', 'files', req.userId, currentDir.path, file.name)
+      currentDir.child.push(file._id)
+      await currentDir.save()
     }
 
     if (fs.existsSync(filePath)) return res.status(400).json({ message: 'File already exist!' })
@@ -79,6 +81,23 @@ const uploadFile = async (req, res) => {
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Upload error' })
+  }
+}
+
+const downloadFile = async(req, res) => {
+  try {
+      const file = await File.findOne({_id: req.query.id})
+      if (!file) {
+        return res.status(400).json({ message: 'File not found' })
+      }
+      const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
+      if (fs.existsSync(filePath)) {
+          return res.download(filePath, file.name)
+      }
+      return res.status(400).json({message: "Download error"})
+  } catch (e) {
+      console.log(e)
+      res.status(500).json({message: "Download error"})
   }
 }
 
@@ -112,9 +131,21 @@ const deleteFile = async (req, res) => {
       return res.status(400).json({ message: 'file not found' })
     }
 
+    const user = await User.findOne({ _id: req.userId })
+
     fileServices.deleteFile(file)
     await file.deleteOne()
 
+    if (file.child.length) {
+      const childFile = file.child.map(async (id) => await File.findOne({ _id: id }))
+      childFile.forEach(async (file) => {
+        user.usedSpace -= file.size
+        await file.deleteOne()
+      })
+    }
+
+    user.usedSpace -= file.size
+    await user.save()
     return res.json({ message: 'File was deleted' })
   } catch (error) {
     console.log(error)
@@ -122,4 +153,5 @@ const deleteFile = async (req, res) => {
   }
 }
 
-module.exports = { createDir, uploadFile, getFiles, deleteFile }
+
+module.exports = { createDir, uploadFile, getFiles, downloadFile, deleteFile }
