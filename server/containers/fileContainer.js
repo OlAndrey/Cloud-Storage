@@ -84,20 +84,32 @@ const uploadFile = async (req, res) => {
   }
 }
 
-const downloadFile = async(req, res) => {
+const downloadFile = async (req, res) => {
   try {
-      const file = await File.findOne({_id: req.query.id})
+    const { idArr } = req.query
+    if (idArr.length > 1) {
+      const files = await Promise.all(idArr.map((id) => File.findOne({ _id: id })))
+      const filesPath = files.map((file) =>
+        path.join(__dirname, '../', 'files', file.user.toString(), file.path)
+      )
+
+      const archivePath = path.join(__dirname, '../', 'files', req.userId, 'download.zip')
+      await fileServices.zipFiles(filesPath, archivePath)
+      return res.download(archivePath, 'download.zip')
+    } else {
+      const file = await File.findOne({ _id: req.query.id })
       if (!file) {
         return res.status(400).json({ message: 'File not found' })
       }
       const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
       if (fs.existsSync(filePath)) {
-          return res.download(filePath, file.name)
+        return res.download(filePath, file.name)
       }
-      return res.status(400).json({message: "Download error"})
+    }
+    return res.status(400).json({ message: 'Download error' })
   } catch (e) {
-      console.log(e)
-      res.status(500).json({message: "Download error"})
+    console.log(e)
+    res.status(500).json({ message: 'Download error' })
   }
 }
 
@@ -137,11 +149,13 @@ const deleteFile = async (req, res) => {
     await file.deleteOne()
 
     if (file.child.length) {
-      const childFile = file.child.map(async (id) => await File.findOne({ _id: id }))
-      childFile.forEach(async (file) => {
-        user.usedSpace -= file.size
-        await file.deleteOne()
-      })
+      const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
+      await Promise.all(
+        childFile.map((file) => {
+          user.usedSpace -= file.size
+          return file.deleteOne()
+        })
+      )
     }
 
     user.usedSpace -= file.size
@@ -152,6 +166,5 @@ const deleteFile = async (req, res) => {
     res.status(500).json({ message: 'Delete error' })
   }
 }
-
 
 module.exports = { createDir, uploadFile, getFiles, downloadFile, deleteFile }

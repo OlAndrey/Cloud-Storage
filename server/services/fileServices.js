@@ -1,12 +1,13 @@
 const fs = require('fs')
+const fsExtra = require('fs-extra')
 const path = require('path')
 const File = require('../models/File')
+const archiver = require('archiver')
 
 class FileServices {
   createDir(file) {
     return new Promise((resolve, reject) => {
       try {
-        console.log(file)
         const userId = typeof file.user === 'string' ? file.user : file.user.toString()
         const pathStr = file.path ? file.path : ''
 
@@ -32,6 +33,27 @@ class FileServices {
     } else {
       fs.unlinkSync(filePath)
     }
+  }
+
+  zipFiles(sourceArr, outPath) {
+    const archive = archiver('zip', { zlib: { level: 9 }});
+    const stream = fs.createWriteStream(outPath);
+  
+    return new Promise((resolve, reject) => {
+      sourceArr.forEach(element => {
+        if(fs.lstatSync(element).isDirectory() )
+        archive.directory(element,  path.parse(element).name)
+        else archive.append(element, {name: path.parse(element).base})
+      });
+
+      archive
+        .on('error', err => reject(err))
+        .pipe(stream)
+      ;
+  
+      stream.on('close', () => resolve());
+      archive.finalize();
+    });
   }
 }
 
