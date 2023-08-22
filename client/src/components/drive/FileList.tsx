@@ -5,6 +5,7 @@ import FileView from './FileView'
 import { deleteFile, setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
+import { downloadFile } from '../../utils/download'
 
 const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
@@ -46,11 +47,9 @@ const FileList = () => {
   }
 
   const handlerSelect = (fileId: string) => {
-    if (selectedFilesId.includes(fileId)) {
+    if (selectedFilesId.includes(fileId))
       setSelectedFilesId(selectedFilesId.filter((selectFile) => selectFile !== fileId))
-    } else {
-      setSelectedFilesId([...selectedFilesId, fileId])
-    }
+    else setSelectedFilesId([...selectedFilesId, fileId])
   }
 
   const handlerDelete = () => {
@@ -96,12 +95,20 @@ const FileList = () => {
               className='hidden'
             />
           </label>
-          <div className='mx-2' onClick={handlerCreateDir}>
+          <div className='px-2 border-r-2 border-gray-900' onClick={handlerCreateDir}>
             <Icon name='FolderPlusIcon' fill='#ffffff' size={[32, 32]} />
           </div>
           {!!selectedFilesId.length && (
             <button
-              className='px-2 border-l-2 border-gray-900 transition duration-150 ease-in-out'
+              className='pl-3 transition duration-150 ease-in-out'
+              onClick={() => downloadFile(selectedFilesId)}
+            >
+              <Icon name='DownloadIcon' fill='#ffffff' size={[24, 24]} />
+            </button>
+          )}
+          {!!selectedFilesId.length && (
+            <button
+              className='pl-3 transition duration-150 ease-in-out'
               disabled={deleteLoading}
               onClick={handlerDelete}
             >
