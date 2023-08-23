@@ -13,7 +13,7 @@ const SideBar = () => {
     >
       <div className='flex flex-grow flex-col border-r border-gray-5 px-2'>
         <div className='mt-2'>
-          <SideBarItem label={'Drive'} to='/drive/' iconName='FolderIcon' hideLabel={hideMenu} />
+          <SideBarItem label={'Drive'} to='/drive' iconName='FolderIcon' hideLabel={hideMenu} />
           <SideBarItem label={'Shared Links'} to='#' iconName='ChainIcon' hideLabel={hideMenu} />
           <SideBarItem label={'Recents'} to='#' iconName='ClockIcon' hideLabel={hideMenu} />
           <SideBarItem label={'Trash'} to='#' iconName='TrashIcon' hideLabel={hideMenu} />

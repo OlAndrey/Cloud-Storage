@@ -27,6 +27,11 @@ const initialState: FileState = {
   popUpDisplay: 'none',
 }
 
+const alertError = (error: any) => {
+  if (error.response && error.response.data.message) return alert(error.response.data.message)
+  return alert(error.message)
+}
+
 export const getFilesFromDir = createAsyncThunk(
   'file/getFiles',
   async (dirId: string | undefined, { rejectWithValue }) => {
@@ -56,11 +61,7 @@ export const createDir = createAsyncThunk(
 
       return res.data
     } catch (error: any) {
-      if (error.response && error.response.data.message) {
-        return alert(error.response.data.message)
-      } else {
-        return alert(error.message)
-      }
+      alertError(error)
     }
   },
 )
@@ -83,11 +84,7 @@ export const uploadFile = createAsyncThunk(
 
       return res.data
     } catch (error: any) {
-      if (error.response && error.response.data.message) {
-        return alert(error.response.data.message)
-      } else {
-        return alert(error.message)
-      }
+      alertError(error)
     }
   },
 )
@@ -98,11 +95,17 @@ export const deleteFile = createAsyncThunk('file/delete', async (id: string) => 
 
     return id
   } catch (error: any) {
-    if (error.response && error.response.data.message) {
-      return alert(error.response.data.message)
-    } else {
-      return alert(error.message)
-    }
+    alertError(error)
+  }
+})
+
+export const editFile = createAsyncThunk('file/edit', async (data: IDir) => {
+  try {
+    const res = await axios.put('/api/file', data)
+
+    return res.data
+  } catch (error: any) {
+    alertError(error)
   }
 })
 
@@ -164,6 +167,18 @@ const fileSlice = createSlice({
       .addCase(deleteFile.rejected, (state) => {
         state.deleteLoading = false
       })
+
+    builder
+      .addCase(editFile.pending, () => undefined)
+      .addCase(editFile.fulfilled, (state, action) => {
+        const editedFile = action.payload?.file
+
+        state.files = state.files.map((file) => {
+          if (file._id !== editedFile._id) return file
+          return editedFile
+        })
+      })
+      .addCase(editFile.rejected, () => undefined)
   },
 })
 

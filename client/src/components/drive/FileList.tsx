@@ -2,13 +2,15 @@ import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { deleteFile, setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
+import { deleteFile, editFile, setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
 import { downloadFile } from '../../utils/download'
+import { IDir } from '../../types/file'
 
 const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
+  const [editFileId, setEditFileId] = useState('')
   const [dragEnter, setDragEnter] = useState(false)
   const { isOwnFolder, deleteLoading, currentDir, files, dirStack } = useAppSelector(
     (state) => state.drive,
@@ -47,9 +49,15 @@ const FileList = () => {
   }
 
   const handlerSelect = (fileId: string) => {
+    if (selectedFilesId.length === 1) setEditFileId('')
     if (selectedFilesId.includes(fileId))
       setSelectedFilesId(selectedFilesId.filter((selectFile) => selectFile !== fileId))
     else setSelectedFilesId([...selectedFilesId, fileId])
+  }
+
+  const handlerEditName = (newName: IDir) => {
+    dispatch(editFile(newName))
+    setEditFileId('')
   }
 
   const handlerDelete = () => {
@@ -83,7 +91,7 @@ const FileList = () => {
           </div>
           <label
             htmlFor='upload-input'
-            className='flex items-center rounded-xl bg-blue-700 mx-2 px-2 py-1 sm:px-4 sm:py-1.5 text-md transition duration-150 ease-in-out hover:bg-blue-800'
+            className='flex items-center rounded-xl bg-blue-700 mx-2 px-2 py-1 sm:px-4 sm:py-1.5 text-md cursor-pointer transition duration-150 ease-in-out hover:bg-blue-800'
           >
             <Icon name='UploadIcon' fill='#ffffff' size={[24, 24]} />
             <span className='hidden ml-2 sm:inline'>Upload Files</span>
@@ -95,20 +103,35 @@ const FileList = () => {
               className='hidden'
             />
           </label>
-          <div className='px-2 border-r-2 border-gray-900' onClick={handlerCreateDir}>
+          <div
+            className='px-2 cursor-pointer border-r-2 border-gray-900'
+            onClick={handlerCreateDir}
+          >
             <Icon name='FolderPlusIcon' fill='#ffffff' size={[32, 32]} />
           </div>
           {!!selectedFilesId.length && (
             <button
               className='pl-3 transition duration-150 ease-in-out'
+              disabled={deleteLoading}
               onClick={() => downloadFile(selectedFilesId)}
             >
               <Icon name='DownloadIcon' fill='#ffffff' size={[24, 24]} />
             </button>
           )}
-          {!!selectedFilesId.length && (
+          {selectedFilesId.length === 1 && (
             <button
               className='pl-3 transition duration-150 ease-in-out'
+              onClick={() => {
+                if (!editFileId) setEditFileId(selectedFilesId[0])
+                else setEditFileId('')
+              }}
+            >
+              <Icon name='EditIcon' fill='#ffffff' size={[22, 22]} />
+            </button>
+          )}
+          {!!selectedFilesId.length && (
+            <button
+              className='pl-2 transition duration-150 ease-in-out'
               disabled={deleteLoading}
               onClick={handlerDelete}
             >
@@ -117,7 +140,19 @@ const FileList = () => {
           )}
         </div>
       ) : (
-        ''
+        <div className='pt-3 px-2 md:px-4 flex justify-end items-center'>
+          <button
+            className='flex ml-auto items-center rounded-xl bg-blue-700 px-2 py-1 sm:px-4 sm:py-1.5 transition duration-150 ease-in-out hover:bg-blue-800'
+            disabled={files.length === 0}
+            onClick={() => {
+              if (selectedFilesId.length < 1) downloadFile(files.map((file) => file._id))
+              else downloadFile(selectedFilesId)
+            }}
+          >
+            <Icon name='DownloadIcon' className='mr-2' fill='#ffffff' size={[24, 24]} />
+            {selectedFilesId.length < 1 ? 'Download all' : 'Download selected'}
+          </button>
+        </div>
       )}
       <div className='pt-3 px-2 md:px-4 grid grid-cols-12 gap-4'>
         <div className='col-start-1'>Type</div>
@@ -131,7 +166,9 @@ const FileList = () => {
             file={file}
             key={index}
             isSelected={selectedFilesId.includes(file._id)}
+            isEdited={editFileId === file._id}
             handlerSelect={handlerSelect}
+            handlerEditName={handlerEditName}
           />
         ))
       ) : (

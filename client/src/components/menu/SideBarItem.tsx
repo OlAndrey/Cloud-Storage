@@ -10,7 +10,7 @@ interface SidenavItemProps {
 }
 
 const SideBarItem = ({ label, to, iconName, hideLabel }: SidenavItemProps): JSX.Element => {
-  const isActive = Math.random() * 4 <= 1
+  const isActive = window.location.pathname.includes(to)
 
   const content: ReactNode = (
     <div className='flex h-10 w-full items-center justify-between'>
