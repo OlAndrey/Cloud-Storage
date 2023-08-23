@@ -103,6 +103,11 @@ const downloadFile = async (req, res) => {
       }
       const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
       if (fs.existsSync(filePath)) {
+        if (file.type === 'dir') {
+          const archivePath = path.join(__dirname, '../', 'files', req.userId, 'download.zip')
+          await fileServices.zipFiles(filePath, archivePath)
+          return res.download(archivePath, 'download.zip')
+        }
         return res.download(filePath, file.name)
       }
     }
@@ -167,4 +172,43 @@ const deleteFile = async (req, res) => {
   }
 }
 
-module.exports = { createDir, uploadFile, getFiles, downloadFile, deleteFile }
+const editNameFile = async (req, res) => {
+  try {
+    const { id, name } = req.body
+    const file = await File.findOne({ _id: id, user: req.userId })
+    if (!file) {
+      return res.status(400).json({ message: 'File not found' })
+    }
+
+    if (name.trim()) {
+      file.name = name
+      await fileServices.editFile(file)
+
+      file.updatedAt = new Date().toISOString()
+
+      const renameFile = async (file, newNameDir) => {
+        if (!file) return undefined
+        const oldPath = file.path.split(path.sep)
+        file.path = [].concat(newNameDir, oldPath.slice(newNameDir.length)).join(path.sep)
+        await file.save()
+        if (!file.child || !file.child.length) {
+          return
+        }
+        const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
+        return await Promise.all(childFile.map((a) => renameFile(a, file.path.split(path.sep))))
+      }
+
+      const newPath = file.path.substr(0, file.path.lastIndexOf(path.sep) + 1) + name
+      await renameFile(file, newPath.split(path.sep))
+
+      return res.status(200).json({ file })
+    }
+
+    throw Error('Edit error')
+  } catch (error) {
+    console.log(error)
+    res.status(500).json(error)
+  }
+}
+
+module.exports = { createDir, uploadFile, getFiles, downloadFile, deleteFile, editNameFile }

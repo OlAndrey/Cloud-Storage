@@ -35,6 +35,31 @@ class FileServices {
     }
   }
 
+  editFile(file) {
+    return new Promise((resolve, reject) => {
+      try {
+        const oldPath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
+        const newPathObj = path.parse(oldPath)
+        newPathObj.base = file.name
+
+        const newPath = path.format(newPathObj)
+        if (!fs.existsSync(newPath)) {
+          if (file.type === 'dir') {
+            fsExtra.copySync(oldPath, newPath)
+            fsExtra.rmdirSync(oldPath, { recursive: true })
+          } else {
+            fs.renameSync(oldPath, newPath)
+          }
+          return resolve({ message: 'File was created!' })
+        }
+        return reject({ message: 'File already exist!' })
+      } catch (error) {
+        console.error(error)
+        reject({ message: 'File error!' })
+      }
+    })
+  }
+
   zipFiles(sourceArr, outPath) {
     const archive = archiver('zip', { zlib: { level: 9 }});
     const stream = fs.createWriteStream(outPath);
