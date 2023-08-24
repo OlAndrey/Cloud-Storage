@@ -2,11 +2,13 @@ import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { deleteFile, editFile, setPopupDisplay, uploadFile } from '../../store/reducers/fileSlice'
+import { deleteFile, editFile, setPopupDisplay } from '../../store/reducers/fileSlice'
+import { uploadFile } from '../../store/reducers/uploadSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
 import { downloadFile } from '../../utils/download'
 import { IDir } from '../../types/file'
+import Uploader from './uploader/Uploader'
 
 const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
@@ -175,6 +177,7 @@ const FileList = () => {
         <div className='pt-3 px-2 md:px-4 text-center'>The folder is empty!</div>
       )}
 
+        <Uploader />
       <Popup />
     </div>
   ) : (

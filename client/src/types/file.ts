@@ -19,6 +19,13 @@ export interface IUploadFile {
     dirId?: string
 }
 
+export interface IUploadFileProcess {
+    id: string
+    name: string
+    progress: number
+    closeUpload: () => void
+}
+
 export interface ICreatedFolder {
     name: string
     parent: string

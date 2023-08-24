@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ICreatedFolder, IUploadFile, IDir, IFile } from '../../types/file'
+import { ICreatedFolder, IDir, IFile } from '../../types/file'
 import axios from '../../utils/axios'
 
 interface FileState {
@@ -66,29 +66,6 @@ export const createDir = createAsyncThunk(
   },
 )
 
-export const uploadFile = createAsyncThunk(
-  'file/uploadFile',
-  async ({ file, dirId }: IUploadFile) => {
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-      if (dirId) {
-        formData.append('parent', dirId)
-      }
-
-      const res = await axios.post('/api/file/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-
-      return res.data
-    } catch (error: any) {
-      alertError(error)
-    }
-  },
-)
-
 export const deleteFile = createAsyncThunk('file/delete', async (id: string) => {
   try {
     await axios.delete(`/api/file?id=${id}`)
@@ -115,6 +92,10 @@ const fileSlice = createSlice({
   reducers: {
     setPopupDisplay: (state, action: PayloadAction<'none' | 'flex'>) => {
       state.popUpDisplay = action.payload
+    },
+    addFile: (state, action: PayloadAction<IFile>) => {
+      const file = action.payload
+      state.files = file ? [...state.files, file] : state.files
     },
   },
   extraReducers: (builder) => {
@@ -147,14 +128,6 @@ const fileSlice = createSlice({
       .addCase(createDir.rejected, () => undefined)
 
     builder
-      .addCase(uploadFile.pending, () => undefined)
-      .addCase(uploadFile.fulfilled, (state, action) => {
-        const file = action.payload?.file
-        state.files = file ? [...state.files, file] : state.files
-      })
-      .addCase(uploadFile.rejected, () => undefined)
-
-    builder
       .addCase(deleteFile.pending, (state) => {
         state.deleteLoading = true
       })
@@ -182,6 +155,6 @@ const fileSlice = createSlice({
   },
 })
 
-export const { setPopupDisplay } = fileSlice.actions
+export const { addFile, setPopupDisplay } = fileSlice.actions
 
 export default fileSlice.reducer

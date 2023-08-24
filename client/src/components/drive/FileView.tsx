@@ -2,6 +2,7 @@ import { FC, KeyboardEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { IDir, IFile } from '../../types/file'
 import Icon from '../icon/Icon'
+import { sizeFormat } from '../../utils/sizeFormat'
 
 type FileViewPropTypes = {
   handlerEditName: (editFile: IDir) => void
@@ -66,7 +67,7 @@ const FileView: FC<FileViewPropTypes> = ({
         )}
       </div>
       <div className='col-start-7 col-end-11'>{file.updatedAt.slice(0, 10)}</div>
-      <div className='col-start-11'>{file.size ? file.size : '-'}</div>
+      <div className='col-start-11'>{file.size ? sizeFormat(file.size) : '-'}</div>
     </div>
   )
 }
