@@ -17,6 +17,10 @@ const fileSchema = mongoose.Schema(
       type: Number,
       default: 0
     },
+    inBasket: {
+      type: Boolean,
+      default: false
+    },
     path: {
       type: String,
       default: ''

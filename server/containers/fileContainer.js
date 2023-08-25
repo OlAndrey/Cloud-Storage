@@ -56,8 +56,6 @@ const uploadFile = async (req, res) => {
     } else {
       pathToFile = path.join(currentDir.path, file.name)
       filePath = path.join(__dirname, '../', 'files', req.userId, currentDir.path, file.name)
-      currentDir.child.push(file._id)
-      await currentDir.save()
     }
 
     if (fs.existsSync(filePath)) return res.status(400).json({ message: 'File already exist!' })
@@ -77,9 +75,13 @@ const uploadFile = async (req, res) => {
     await dbFile.save()
     await user.save()
 
+    if(currentDir){
+      currentDir.child.push(dbFile._id)
+      await currentDir.save()
+    }
     return res.status(200).json({ file: dbFile })
   } catch (error) {
-    console.error(error)
+    console.log(error)
     res.status(500).json({ message: 'Upload error' })
   }
 }
@@ -122,7 +124,9 @@ const getFiles = async (req, res) => {
   try {
     const { parent } = req.query
     const currentDir = parent ? await File.findOne({ _id: parent }) : null
-    const findObj = parent ? { parent } : { user: req.userId, parent }
+    const findObj = parent
+      ? { parent }
+      : { user: req.userId, parent }
     const files = await File.find(findObj)
 
     const isOwn = !currentDir || currentDir.user.toString() === req.userId
@@ -130,6 +134,8 @@ const getFiles = async (req, res) => {
     if (isOwn && currentDir) {
       let parentDir = currentDir
       while (parentDir) {
+        if (parentDir.inBasket)
+          return res.status(406).json({ message: 'The folder or file is in the trash' })
         stackDir.unshift({ name: parentDir.name, id: parentDir._id })
         parentDir = parentDir.parent ? await File.findOne({ _id: parentDir.parent }) : null
       }
@@ -138,37 +144,6 @@ const getFiles = async (req, res) => {
     return res.status(200).json({ files, currentDir, stackDir, isOwn })
   } catch (e) {
     res.status(500).json({ message: 'Can`t get files' })
-  }
-}
-
-const deleteFile = async (req, res) => {
-  try {
-    const file = await File.findOne({ _id: req.query.id, user: req.userId })
-    if (!file) {
-      return res.status(400).json({ message: 'file not found' })
-    }
-
-    const user = await User.findOne({ _id: req.userId })
-
-    fileServices.deleteFile(file)
-    await file.deleteOne()
-
-    if (file.child.length) {
-      const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
-      await Promise.all(
-        childFile.map((file) => {
-          user.usedSpace -= file.size
-          return file.deleteOne()
-        })
-      )
-    }
-
-    user.usedSpace -= file.size
-    await user.save()
-    return res.json({ message: 'File was deleted' })
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ message: 'Delete error' })
   }
 }
 
@@ -211,4 +186,10 @@ const editNameFile = async (req, res) => {
   }
 }
 
-module.exports = { createDir, uploadFile, getFiles, downloadFile, deleteFile, editNameFile }
+module.exports = {
+  createDir,
+  uploadFile,
+  getFiles,
+  downloadFile,
+  editNameFile
+}

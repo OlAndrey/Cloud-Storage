@@ -25,6 +25,13 @@ class FileServices {
     })
   }
 
+  moveFile(file) {
+    const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
+    const newPath = path.join(__dirname, '../', 'files', file.user.toString(), file.name)
+
+    return fsExtra.move(filePath, newPath)
+  }
+
   deleteFile(file) {
     const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
 
