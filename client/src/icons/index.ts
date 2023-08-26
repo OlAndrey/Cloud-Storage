@@ -124,6 +124,14 @@ const EditIcon = [
   '0 0 24 24'
 ]
 
+const RestoreIcon = [
+  `
+    <path d="M5.88468 17C7.32466 19.1128 9.75033 20.5 12.5 20.5C16.9183 20.5 20.5 16.9183 20.5 12.5C20.5 8.08172 16.9183 4.5 12.5 4.5C8.08172 4.5 4.5 8.08172 4.5 12.5V13.5M12.5 8V12.5L15.5 15.5" stroke="#ffffff" stroke-width="1.2"/>
+    <path d="M7 11L4.5 13.5L2 11" stroke="#ffffff" stroke-width="1.2"/>
+  `,
+  '0, 0, 25, 25'
+]
+
 const icons: Record<string, string[]> = {
   EyeIcon,
   EyeOffIcon,
@@ -141,6 +149,7 @@ const icons: Record<string, string[]> = {
   UploadIcon,
   DownloadIcon,
   EditIcon,
+  RestoreIcon,
 }
 
 export default icons

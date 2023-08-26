@@ -31,7 +31,7 @@ const Popup = () => {
       style={{ display: popupDisplay }}
       className='absolute top-0 left-0 h-screen w-screen flex-col justify-center items-center bg-black/50'
     >
-      <div className='w-full relative px-2 sm:mx-auto sm:max-w-md bg-white rounded-lg shadow bg-default'>
+      <div className='w-full relative px-2 sm:mx-auto sm:max-w-md rounded-lg shadow bg-default'>
         <div className='flex justify-between p-2'>
           <h3 className='text-xl'>New Folder</h3>
           <button

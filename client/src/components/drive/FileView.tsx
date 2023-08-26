@@ -5,11 +5,11 @@ import Icon from '../icon/Icon'
 import { sizeFormat } from '../../utils/sizeFormat'
 
 type FileViewPropTypes = {
-  handlerEditName: (editFile: IDir) => void
+  handlerEditName?: (editFile: IDir) => void
   handlerSelect: (fileId: string) => void
   file: IFile
   isSelected: boolean
-  isEdited: boolean
+  isEdited?: boolean
 }
 
 const FileView: FC<FileViewPropTypes> = ({
@@ -28,7 +28,7 @@ const FileView: FC<FileViewPropTypes> = ({
   const handlerEdit = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.keyCode === 13 || event.key === 'Enter') {
       const newName = name + fileType
-      if (newName !== file.name)
+      if (newName !== file.name && handlerEditName)
         handlerEditName({
           id: file._id,
           name: newName,
@@ -51,7 +51,9 @@ const FileView: FC<FileViewPropTypes> = ({
         />
       </div>
       <div className='col-start-3 md:col-start-2 col-end-7'>
-        {isEdited ? (
+        {file.inBasket ? (
+          <div>{file.name}</div>
+        ) : isEdited ? (
           <div className='w-34 max-w-full'>
             <input
               className='text-white border-2 bg-zinc-900 focus:border-zinc-400'

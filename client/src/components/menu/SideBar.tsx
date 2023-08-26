@@ -16,7 +16,7 @@ const SideBar = () => {
           <SideBarItem label={'Drive'} to='/drive' iconName='FolderIcon' hideLabel={hideMenu} />
           <SideBarItem label={'Shared Links'} to='#' iconName='ChainIcon' hideLabel={hideMenu} />
           <SideBarItem label={'Recents'} to='#' iconName='ClockIcon' hideLabel={hideMenu} />
-          <SideBarItem label={'Trash'} to='#' iconName='TrashIcon' hideLabel={hideMenu} />
+          <SideBarItem label={'Trash'} to='/trash' iconName='TrashIcon' hideLabel={hideMenu} />
         </div>
 
         <div className='sm:hidden mt-8'>

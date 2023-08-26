@@ -3,6 +3,7 @@ export interface IFile {
     name: string
     type: 'file' | 'dir'
     user: string
+    inBasket: boolean
     createdAt: string
     updatedAt: string
     size?: number

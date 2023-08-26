@@ -5,7 +5,6 @@ import axios from '../../utils/axios'
 
 interface FileState {
   loading: boolean
-  deleteLoading: boolean
   error: string
   isOwnFolder: boolean
   files: IFile[]
@@ -17,7 +16,6 @@ interface FileState {
 
 const initialState: FileState = {
   loading: false,
-  deleteLoading: false,
   error: '',
   isOwnFolder: false,
   files: [],
@@ -66,9 +64,9 @@ export const createDir = createAsyncThunk(
   },
 )
 
-export const deleteFile = createAsyncThunk('file/delete', async (id: string) => {
+export const moveToBasket = createAsyncThunk('file/move', async (id: string) => {
   try {
-    await axios.delete(`/api/file?id=${id}`)
+    await axios.put(`/api/file/move?id=${id}`, {})
 
     return id
   } catch (error: any) {
@@ -127,19 +125,12 @@ const fileSlice = createSlice({
       })
       .addCase(createDir.rejected, () => undefined)
 
-    builder
-      .addCase(deleteFile.pending, (state) => {
-        state.deleteLoading = true
-      })
-      .addCase(deleteFile.fulfilled, (state, action) => {
-        const fileId = action.payload
+    builder.addCase(moveToBasket.fulfilled, (state, action) => {
+      const fileId = action.payload
 
-        state.deleteLoading = false
-        state.files = state.files.filter((file) => file._id !== fileId)
-      })
-      .addCase(deleteFile.rejected, (state) => {
-        state.deleteLoading = false
-      })
+      state.files = state.files.filter((file) => file._id !== fileId)
+    })
+
 
     builder
       .addCase(editFile.pending, () => undefined)

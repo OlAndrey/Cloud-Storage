@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { deleteFile, editFile, setPopupDisplay } from '../../store/reducers/fileSlice'
+import { moveToBasket, editFile, setPopupDisplay } from '../../store/reducers/fileSlice'
 import { uploadFile } from '../../store/reducers/uploadSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
@@ -14,7 +14,7 @@ const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
   const [editFileId, setEditFileId] = useState('')
   const [dragEnter, setDragEnter] = useState(false)
-  const { isOwnFolder, deleteLoading, currentDir, files, dirStack } = useAppSelector(
+  const { isOwnFolder, currentDir, files, dirStack } = useAppSelector(
     (state) => state.drive,
   )
   const dispatch = useAppDispatch()
@@ -63,7 +63,8 @@ const FileList = () => {
   }
 
   const handlerDelete = () => {
-    selectedFilesId.forEach((id) => dispatch(deleteFile(id)))
+    setSelectedFilesId([])
+    selectedFilesId.forEach((id) => dispatch(moveToBasket(id)))
   }
 
   return !dragEnter ? (
@@ -114,7 +115,6 @@ const FileList = () => {
           {!!selectedFilesId.length && (
             <button
               className='pl-3 transition duration-150 ease-in-out'
-              disabled={deleteLoading}
               onClick={() => downloadFile(selectedFilesId)}
             >
               <Icon name='DownloadIcon' fill='#ffffff' size={[24, 24]} />
@@ -134,7 +134,6 @@ const FileList = () => {
           {!!selectedFilesId.length && (
             <button
               className='pl-2 transition duration-150 ease-in-out'
-              disabled={deleteLoading}
               onClick={handlerDelete}
             >
               <Icon name='TrashIcon' fill='#ffffff' size={[28, 28]} />

@@ -7,6 +7,7 @@ import Registry from './components/authorization/Registry'
 import Main from './components/drive/Main'
 import Header from './components/header/Header'
 import Icon from './components/icon/Icon'
+import Trash from './components/drive/Trash'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -33,6 +34,7 @@ const App = () => {
         <Routes>
           <Route path='/drive/folders/:id' element={<Main />} />
           <Route path='/drive' element={<Main />} />
+          <Route path='/trash' element={<Trash />} />
           <Route path='/*' element={<Navigate to='/drive' replace={true} />} />
         </Routes>
       ) : (
