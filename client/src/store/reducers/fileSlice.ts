@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { ICreatedFolder, IDir, IFile } from '../../types/file'
+import { ICreatedFolder, IDir, IFile, IOrderSettings } from '../../types/file'
 import axios from '../../utils/axios'
+import { sortByDate, sortByName } from '../../utils/sortFiles'
 
 interface FileState {
   loading: boolean
@@ -10,6 +11,7 @@ interface FileState {
   files: IFile[]
   currentDir: string
   dirStack: IDir[]
+  order: IOrderSettings
   view: string
   popUpDisplay: 'none' | 'flex'
 }
@@ -21,6 +23,7 @@ const initialState: FileState = {
   files: [],
   currentDir: '',
   dirStack: [],
+  order: { by: 'name', direction: 'ASC' },
   view: 'list',
   popUpDisplay: 'none',
 }
@@ -88,6 +91,12 @@ const fileSlice = createSlice({
   name: 'file',
   initialState,
   reducers: {
+    setOrder: (state, action: PayloadAction<IOrderSettings>) => {
+      const { by, direction } = action.payload
+      state.files =
+        by === 'name' ? sortByName(state.files, direction) : sortByDate(state.files, direction)
+      state.order = action.payload
+    },
     setPopupDisplay: (state, action: PayloadAction<'none' | 'flex'>) => {
       state.popUpDisplay = action.payload
     },
@@ -131,7 +140,6 @@ const fileSlice = createSlice({
       state.files = state.files.filter((file) => file._id !== fileId)
     })
 
-
     builder
       .addCase(editFile.pending, () => undefined)
       .addCase(editFile.fulfilled, (state, action) => {
@@ -146,6 +154,6 @@ const fileSlice = createSlice({
   },
 })
 
-export const { addFile, setPopupDisplay } = fileSlice.actions
+export const { addFile, setOrder, setPopupDisplay } = fileSlice.actions
 
 export default fileSlice.reducer

@@ -10,6 +10,11 @@ export interface IFile {
     accessLink: string
 }
 
+export interface IOrderSettings {
+    by: 'name' | 'date'
+    direction: 'ASC' | 'DESC'
+}
+
 export interface IDir {
     id: string | null
     name: string

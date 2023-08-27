@@ -132,6 +132,20 @@ const RestoreIcon = [
   '0, 0, 25, 25'
 ]
 
+const ArrowUpIcon = [
+  `
+    <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  '0 0 24 24'
+]
+
+const ArrowDownIcon = [
+  `
+    <path d="M12 6V18M12 18L7 13M12 18L17 13" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  '0 0 24 24'
+]
+
 const icons: Record<string, string[]> = {
   EyeIcon,
   EyeOffIcon,
@@ -150,6 +164,8 @@ const icons: Record<string, string[]> = {
   DownloadIcon,
   EditIcon,
   RestoreIcon,
+  ArrowUpIcon,
+  ArrowDownIcon
 }
 
 export default icons

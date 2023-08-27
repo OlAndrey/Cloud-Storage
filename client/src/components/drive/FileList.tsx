@@ -2,7 +2,7 @@ import { ChangeEvent, DragEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileView from './FileView'
-import { moveToBasket, editFile, setPopupDisplay } from '../../store/reducers/fileSlice'
+import { moveToBasket, editFile, setPopupDisplay, setOrder } from '../../store/reducers/fileSlice'
 import { uploadFile } from '../../store/reducers/uploadSlice'
 import Icon from '../icon/Icon'
 import Popup from './PopUp'
@@ -14,9 +14,7 @@ const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
   const [editFileId, setEditFileId] = useState('')
   const [dragEnter, setDragEnter] = useState(false)
-  const { isOwnFolder, currentDir, files, dirStack } = useAppSelector(
-    (state) => state.drive,
-  )
+  const { isOwnFolder, currentDir, files, dirStack, order } = useAppSelector((state) => state.drive)
   const dispatch = useAppDispatch()
 
   const handlerCreateDir = () => {
@@ -65,6 +63,12 @@ const FileList = () => {
   const handlerDelete = () => {
     setSelectedFilesId([])
     selectedFilesId.forEach((id) => dispatch(moveToBasket(id)))
+  }
+
+  const handlerSortFiles = (by: 'name' | 'date') => {
+    const orderSetting = { by, direction: order.direction }
+    if (order.by === by) orderSetting.direction = order.direction === 'ASC' ? 'DESC' : 'ASC'
+    dispatch(setOrder(orderSetting))
   }
 
   return !dragEnter ? (
@@ -132,10 +136,7 @@ const FileList = () => {
             </button>
           )}
           {!!selectedFilesId.length && (
-            <button
-              className='pl-2 transition duration-150 ease-in-out'
-              onClick={handlerDelete}
-            >
+            <button className='pl-2 transition duration-150 ease-in-out' onClick={handlerDelete}>
               <Icon name='TrashIcon' fill='#ffffff' size={[28, 28]} />
             </button>
           )}
@@ -157,8 +158,30 @@ const FileList = () => {
       )}
       <div className='pt-3 px-2 md:px-4 grid grid-cols-12 gap-4'>
         <div className='col-start-1'>Type</div>
-        <div className='col-start-3 md:col-start-2'>Name</div>
-        <div className='col-start-7'>Modified</div>
+        <div
+          className='col-start-3 md:col-start-2 cursor-pointer flex align-center gap-3'
+          onClick={() => handlerSortFiles('name')}
+        >
+          Name
+          {order.by === 'name' &&
+            (order.direction === 'ASC' ? (
+              <Icon name='ArrowUpIcon' size={[18, 18]} />
+            ) : (
+              <Icon name='ArrowDownIcon' size={[18, 18]} />
+            ))}
+        </div>
+        <div
+          className='col-start-7 cursor-pointer flex align-center gap-3'
+          onClick={() => handlerSortFiles('date')}
+        >
+          Modified
+          {order.by === 'date' &&
+            (order.direction === 'ASC' ? (
+              <Icon name='ArrowUpIcon' size={[18, 18]} />
+            ) : (
+              <Icon name='ArrowDownIcon' size={[18, 18]} />
+            ))}
+        </div>
         <div className='col-start-11'>Size</div>
       </div>
       {files.length ? (
@@ -176,7 +199,7 @@ const FileList = () => {
         <div className='pt-3 px-2 md:px-4 text-center'>The folder is empty!</div>
       )}
 
-        <Uploader />
+      <Uploader />
       <Popup />
     </div>
   ) : (
