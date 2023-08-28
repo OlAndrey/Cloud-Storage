@@ -75,7 +75,7 @@ const uploadFile = async (req, res) => {
     await dbFile.save()
     await user.save()
 
-    if(currentDir){
+    if (currentDir) {
       currentDir.child.push(dbFile._id)
       await currentDir.save()
     }
@@ -122,12 +122,25 @@ const downloadFile = async (req, res) => {
 
 const getFiles = async (req, res) => {
   try {
-    const { parent } = req.query
+    const { parent, sortBy, direction } = req.query
+    const sortParam = direction !== 'ASC' ? -1 : 1
     const currentDir = parent ? await File.findOne({ _id: parent }) : null
     const findObj = parent
-      ? { parent }
-      : { user: req.userId, parent }
-    const files = await File.find(findObj)
+      ? { parent, inBasket: false }
+      : { user: req.userId, parent, inBasket: false }
+
+    let files
+    switch (sortBy) {
+      case 'name':
+        files = await File.find(findObj).sort({ name: sortParam })
+        break
+      case 'date':
+        files = await File.find(findObj).sort({ updatedAt: sortParam })
+        break
+      default:
+        files = await File.find(findObj)
+        break
+    }
 
     const isOwn = !currentDir || currentDir.user.toString() === req.userId
     const stackDir = []

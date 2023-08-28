@@ -41,7 +41,7 @@ const restoreFile = async (req, res) => {
           await FileServices.moveFile(file)
           file.parent = undefined
           file.path = file.name
-          parentDir.child = parentDir.child.filter((id) => id.toString() !== file._id.toString())
+          parentDir.child = parentDir.child.filter((id) => id !== file._id)
           await file.save()
           await parentDir.save()
           return res.status(200).json({ file })
