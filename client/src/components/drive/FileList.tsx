@@ -159,27 +159,27 @@ const FileList = () => {
       <div className='pt-3 px-2 md:px-4 grid grid-cols-12 gap-4'>
         <div className='col-start-1'>Type</div>
         <div
-          className='col-start-3 md:col-start-2 cursor-pointer flex align-center gap-3'
+          className='col-start-3 md:col-start-2 cursor-pointer flex items-center gap-3'
           onClick={() => handlerSortFiles('name')}
         >
           Name
           {order.by === 'name' &&
             (order.direction === 'ASC' ? (
-              <Icon name='ArrowUpIcon' size={[18, 18]} />
+              <Icon name='ArrowUpIcon' size={[18, 18]} className='min-w-[20px]' />
             ) : (
-              <Icon name='ArrowDownIcon' size={[18, 18]} />
+              <Icon name='ArrowDownIcon' size={[18, 18]} className='min-w-[20px]' />
             ))}
         </div>
         <div
-          className='col-start-7 cursor-pointer flex align-center gap-3'
+          className='col-start-7 cursor-pointer flex items-center gap-3'
           onClick={() => handlerSortFiles('date')}
         >
           Modified
           {order.by === 'date' &&
             (order.direction === 'ASC' ? (
-              <Icon name='ArrowUpIcon' size={[18, 18]} />
+              <Icon name='ArrowUpIcon' size={[18, 18]} className='min-w-[20px]' />
             ) : (
-              <Icon name='ArrowDownIcon' size={[18, 18]} />
+              <Icon name='ArrowDownIcon' size={[18, 18]} className='min-w-[20px]' />
             ))}
         </div>
         <div className='col-start-11'>Size</div>

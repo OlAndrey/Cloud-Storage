@@ -3,6 +3,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { ICreatedFolder, IDir, IFile, IOrderSettings } from '../../types/file'
 import axios from '../../utils/axios'
 import { sortByDate, sortByName } from '../../utils/sortFiles'
+import { RootState } from '..'
 
 interface FileState {
   loading: boolean
@@ -35,9 +36,15 @@ const alertError = (error: any) => {
 
 export const getFilesFromDir = createAsyncThunk(
   'file/getFiles',
-  async (dirId: string | undefined, { rejectWithValue }) => {
+  async (dirId: string | undefined, { getState, rejectWithValue }) => {
     try {
-      const res = await axios.get(`/api/file${dirId ? '?parent=' + dirId : ''}`)
+      const state = getState() as RootState
+      const { order } = state.drive
+      const res = await axios.get(
+        `/api/file?${dirId ? 'parent=' + dirId : ''}&sortBy=${order.by}&direction=${
+          order.direction
+        }`,
+      )
 
       return res.data
     } catch (error: any) {
@@ -129,16 +136,22 @@ const fileSlice = createSlice({
     builder
       .addCase(createDir.pending, () => undefined)
       .addCase(createDir.fulfilled, (state, action) => {
+        const { by, direction } = state.order
         const file = action.payload?.file
-        state.files = file ? [...state.files, file] : state.files
+
+        const files = file ? [...state.files, file] : state.files
+        state.files = by === 'name' ? sortByName(files, direction) : sortByDate(files, direction)
       })
       .addCase(createDir.rejected, () => undefined)
 
-    builder.addCase(moveToBasket.fulfilled, (state, action) => {
-      const fileId = action.payload
+    builder
+      .addCase(moveToBasket.pending, () => undefined)
+      .addCase(moveToBasket.fulfilled, (state, action) => {
+        const fileId = action.payload
 
-      state.files = state.files.filter((file) => file._id !== fileId)
-    })
+        state.files = state.files.filter((file) => file._id !== fileId)
+      })
+      .addCase(moveToBasket.rejected, () => undefined)
 
     builder
       .addCase(editFile.pending, () => undefined)
