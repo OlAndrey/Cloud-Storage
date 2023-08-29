@@ -6,6 +6,7 @@ const http = require('http')
 const fileUpload = require('express-fileupload');
 const authRoute = require('./routes/auth')
 const fileRoute = require('./routes/file')
+const recentRoute = require('./routes/recent')
 
 const app = express()
 dotenv.config()
@@ -19,6 +20,7 @@ app.use(express.json())
 
 app.use('/api/auth', authRoute)
 app.use('/api/file', fileRoute)
+app.use('/api/recent', recentRoute)
 
 const port = process.env.PORT || 5001
 const server = http.createServer(app)

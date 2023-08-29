@@ -4,7 +4,7 @@ const FileServices = require('../services/FileServices')
 
 const getFilesFromBasket = async (req, res) => {
   try {
-    const files = await File.find({ user: req.userId, inBasket: true })
+    const files = await File.find({ user: req.userId, status: 'TRASHED'})
 
     return res.status(200).json({ files })
   } catch (e) {
@@ -14,11 +14,12 @@ const getFilesFromBasket = async (req, res) => {
 
 const moveToBasket = async (req, res) => {
   try {
+    const { status } = req.body
     const file = await File.findOneAndUpdate(
       { _id: req.query.id, user: req.userId },
       {
         $set: {
-          inBasket: true
+          status
         }
       }
     )
@@ -32,12 +33,12 @@ const moveToBasket = async (req, res) => {
 const restoreFile = async (req, res) => {
   try {
     const file = await File.findOne({ _id: req.query.id, user: req.userId })
-    file.inBasket = false
+    file.status = 'EXISTS'
 
     if (file.parent) {
       let parentDir = await File.findOne({ _id: file.parent })
       while (parentDir) {
-        if (parentDir.inBasket) {
+        if (parentDir.status !== 'EXISTS') {
           await FileServices.moveFile(file)
           file.parent = undefined
           file.path = file.name

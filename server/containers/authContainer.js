@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User')
 const File = require('../models/File')
 const fileServices = require('../services/FileServices')
+const Recent = require('../models/Recent')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -21,6 +22,8 @@ const register = async (req, res) => {
     try {
       const file = new File({ user: newUser._id, name: '' })
       await fileServices.createDir(file)
+      const recent = new Recent({ user: newUser._id })
+      await recent.save()
 
       try {
         const user = await newUser.save()

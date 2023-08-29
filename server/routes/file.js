@@ -7,7 +7,7 @@ const {
   editNameFile,
   downloadFile,
 } = require('../containers/fileContainer')
-const { getFilesFromBasket, moveToBasket, deleteFile, restoreFile } = require('../containers/basket')
+const { getFilesFromBasket, moveToBasket, deleteFile, restoreFile } = require('../containers/basketContainer')
 
 const route = express.Router()
 

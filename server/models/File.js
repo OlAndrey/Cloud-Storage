@@ -17,9 +17,9 @@ const fileSchema = mongoose.Schema(
       type: Number,
       default: 0
     },
-    inBasket: {
-      type: Boolean,
-      default: false
+    status: {
+      type: String,
+      default: 'EXISTS'
     },
     path: {
       type: String,

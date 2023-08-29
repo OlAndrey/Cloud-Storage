@@ -3,6 +3,8 @@ const path = require('path')
 const fileServices = require('../services/FileServices')
 const File = require('../models/File')
 const User = require('../models/User')
+const Recent = require('../models/Recent')
+const { updateOpeningDate } = require('./recentContainer')
 
 const createDir = async (req, res) => {
   try {
@@ -126,8 +128,8 @@ const getFiles = async (req, res) => {
     const sortParam = direction !== 'ASC' ? -1 : 1
     const currentDir = parent ? await File.findOne({ _id: parent }) : null
     const findObj = parent
-      ? { parent, inBasket: false }
-      : { user: req.userId, parent, inBasket: false }
+      ? { parent, status: 'EXISTS' }
+      : { user: req.userId, parent, status: 'EXISTS' }
 
     let files
     switch (sortBy) {
@@ -145,9 +147,11 @@ const getFiles = async (req, res) => {
     const isOwn = !currentDir || currentDir.user.toString() === req.userId
     const stackDir = []
     if (isOwn && currentDir) {
+      await updateOpeningDate(req.userId, currentDir._id)
+
       let parentDir = currentDir
       while (parentDir) {
-        if (parentDir.inBasket)
+        if (parentDir.status !== 'EXISTS')
           return res.status(406).json({ message: 'The folder or file is in the trash' })
         stackDir.unshift({ name: parentDir.name, id: parentDir._id })
         parentDir = parentDir.parent ? await File.findOne({ _id: parentDir.parent }) : null
@@ -156,6 +160,7 @@ const getFiles = async (req, res) => {
 
     return res.status(200).json({ files, currentDir, stackDir, isOwn })
   } catch (e) {
+    console.log(e)
     res.status(500).json({ message: 'Can`t get files' })
   }
 }
