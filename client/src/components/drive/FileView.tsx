@@ -6,9 +6,9 @@ import { sizeFormat } from '../../utils/sizeFormat'
 
 type FileViewPropTypes = {
   handlerEditName?: (editFile: IDir) => void
-  handlerSelect: (fileId: string) => void
+  handlerSelect?: (fileId: string) => void
   file: IFile
-  isSelected: boolean
+  isSelected?: boolean
   isEdited?: boolean
 }
 
@@ -41,7 +41,9 @@ const FileView: FC<FileViewPropTypes> = ({
       className={`grid grid-cols-12 items-center gap-4 py-1.5 px-2 md:px-4 hover:px-0 hover:md:px-2 duration-200 transition-all cursor-pointer ${
         isSelected ? 'bg-blue-500/25' : ''
       }`}
-      onClick={() => handlerSelect(file._id)}
+      onClick={() => {
+        if (handlerSelect) handlerSelect(file._id)
+      }}
     >
       <div className='col-start-1'>
         <Icon
@@ -65,7 +67,9 @@ const FileView: FC<FileViewPropTypes> = ({
             {fileType}
           </div>
         ) : (
-          <Link to={`/drive/folders/${file._id}`}>{file.name}</Link>
+          <Link to={`/drive/${file.type === 'dir' ? 'folders' : 'file'}/${file._id}`}>
+            {file.name}
+          </Link>
         )}
       </div>
       <div className='col-start-7 col-end-11'>{file.updatedAt.slice(0, 10)}</div>
