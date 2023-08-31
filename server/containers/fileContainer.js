@@ -25,7 +25,6 @@ const createDir = async (req, res) => {
         await parentFile.save()
       }
     } catch (error) {
-      console.log(error)
       file.path = name
       await fileServices.createDir(file)
     }
@@ -145,9 +144,9 @@ const getFiles = async (req, res) => {
     }
 
     const isOwn = !currentDir || currentDir.user.toString() === req.userId
-    const stackDir = []
-    if (isOwn && currentDir) {
-      await updateOpeningDate(req.userId, currentDir._id)
+    let stackDir = []
+    if (currentDir) {
+       await updateOpeningDate(req.userId, currentDir._id)
 
       let parentDir = currentDir
       while (parentDir) {
@@ -158,6 +157,7 @@ const getFiles = async (req, res) => {
       }
     }
 
+    stackDir = isOwn ? stackDir : []
     return res.status(200).json({ files, currentDir, stackDir, isOwn })
   } catch (e) {
     console.log(e)
