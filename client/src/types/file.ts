@@ -10,6 +10,15 @@ export interface IFile {
     accessLink: string
 }
 
+export interface IRecentFile extends IFile {
+    author: {
+        id: string
+        name: string
+        avatar: string
+    }
+    newlyOpened: string
+}
+
 export interface IOrderSettings {
     by: 'name' | 'date'
     direction: 'ASC' | 'DESC'

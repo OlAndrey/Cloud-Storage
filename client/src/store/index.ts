@@ -3,13 +3,15 @@ import authReducer from './reducers/authSlice'
 import fileReducer from './reducers/fileSlice'
 import uploadReducer from './reducers/uploadSlice'
 import trashReducer from './reducers/trashSlice'
+import recentReducer from './reducers/recentSlice'
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     drive: fileReducer,
     upload: uploadReducer,
-    trash: trashReducer
+    trash: trashReducer,
+    recent: recentReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false

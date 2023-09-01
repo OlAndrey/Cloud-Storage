@@ -94,25 +94,6 @@ export const editFile = createAsyncThunk('file/edit', async (data: IDir) => {
   }
 })
 
-export const getRecentFiles = createAsyncThunk(
-  'file/getRecentFiles',
-  async (_, { getState, rejectWithValue }) => {
-    try {
-      const state = getState() as RootState
-      const { order } = state.drive
-      const res = await axios.get(`/api/recent?&sortBy=${order.by}&direction=${order.direction}`)
-
-      return res.data
-    } catch (error: any) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message)
-      } else {
-        return rejectWithValue(error.message)
-      }
-    }
-  },
-)
-
 const fileSlice = createSlice({
   name: 'file',
   initialState,
@@ -183,23 +164,6 @@ const fileSlice = createSlice({
         })
       })
       .addCase(editFile.rejected, () => undefined)
-
-    builder
-      .addCase(getRecentFiles.pending, (state) => {
-        state.loading = true
-        state.error = ''
-      })
-      .addCase(getRecentFiles.fulfilled, (state, action) => {
-        const { files } = action.payload
-
-        state.loading = false
-        state.files = files
-      })
-      .addCase(getRecentFiles.rejected, (state, action) => {
-        const errorMsg = action.payload ? action.payload : ''
-        state.loading = false
-        state.error = errorMsg as string
-      })
   },
 })
 
