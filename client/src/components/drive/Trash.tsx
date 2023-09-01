@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import { deleteFile, getFilesFromTrash, restoreFile } from '../../store/reducers/trashSlice'
 import Icon from '../icon/Icon'
 import SideBar from '../menu/SideBar'
-import FileView from './FileView'
+import FileItem from './FileItem'
 
 const Trash = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
@@ -80,7 +80,7 @@ const Trash = () => {
             </div>
             {files.length ? (
               files.map((file, index) => (
-                <FileView
+                <FileItem
                   file={file}
                   key={index}
                   isSelected={selectedFilesId.includes(file._id)}

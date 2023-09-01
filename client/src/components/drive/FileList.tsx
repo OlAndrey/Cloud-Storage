@@ -1,7 +1,7 @@
-import { ChangeEvent, DragEvent, useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import FileView from './FileView'
+import FileItem from './FileItem'
 import { moveToBasket, editFile, setPopupDisplay, setOrder } from '../../store/reducers/fileSlice'
 import { uploadFile } from '../../store/reducers/uploadSlice'
 import Icon from '../icon/Icon'
@@ -9,13 +9,16 @@ import Popup from './PopUp'
 import { downloadFile } from '../../utils/download'
 import { IDir } from '../../types/file'
 import Uploader from './uploader/Uploader'
+import { useDragDrop } from '../../hooks/dragDrop'
 
 const FileList = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
   const [editFileId, setEditFileId] = useState('')
-  const [dragEnter, setDragEnter] = useState(false)
   const { isOwnFolder, currentDir, files, dirStack, order } = useAppSelector((state) => state.drive)
   const dispatch = useAppDispatch()
+
+  const dropCallback = (file: File) => dispatch(uploadFile({ file, dirId: currentDir }))
+  const [dragEnter, dragEnterHandler, dragLeaveHandler, dropHandler] = useDragDrop(dropCallback)
 
   const handlerCreateDir = () => {
     dispatch(setPopupDisplay('flex'))
@@ -26,26 +29,6 @@ const FileList = () => {
       const files = [...e.target.files]
       files.forEach((file) => dispatch(uploadFile({ file, dirId: currentDir })))
     }
-  }
-
-  const dragEnterHandler = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setDragEnter(true)
-  }
-
-  const dragLeaveHandler = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setDragEnter(false)
-  }
-
-  const dropHandler = (event: DragEvent<HTMLDivElement>) => {
-    event.preventDefault()
-    event.stopPropagation()
-    const files = [...event.dataTransfer.files]
-    files.forEach((file) => dispatch(uploadFile({ file, dirId: currentDir })))
-    setDragEnter(false)
   }
 
   const handlerSelect = (fileId: string) => {
@@ -69,6 +52,14 @@ const FileList = () => {
     const orderSetting = { by, direction: order.direction }
     if (order.by === by) orderSetting.direction = order.direction === 'ASC' ? 'DESC' : 'ASC'
     dispatch(setOrder(orderSetting))
+  }
+
+  const Arrow = () => {
+    return order.direction === 'ASC' ? (
+      <Icon name='ArrowUpIcon' size={[18, 18]} className='min-w-[20px]' />
+    ) : (
+      <Icon name='ArrowDownIcon' size={[18, 18]} className='min-w-[20px]' />
+    )
   }
 
   return !dragEnter ? (
@@ -163,30 +154,20 @@ const FileList = () => {
           onClick={() => handlerSortFiles('name')}
         >
           Name
-          {order.by === 'name' &&
-            (order.direction === 'ASC' ? (
-              <Icon name='ArrowUpIcon' size={[18, 18]} className='min-w-[20px]' />
-            ) : (
-              <Icon name='ArrowDownIcon' size={[18, 18]} className='min-w-[20px]' />
-            ))}
+          {order.by === 'name' && <Arrow />}
         </div>
         <div
           className='col-start-7 cursor-pointer flex items-center gap-3'
           onClick={() => handlerSortFiles('date')}
         >
           Modified
-          {order.by === 'date' &&
-            (order.direction === 'ASC' ? (
-              <Icon name='ArrowUpIcon' size={[18, 18]} className='min-w-[20px]' />
-            ) : (
-              <Icon name='ArrowDownIcon' size={[18, 18]} className='min-w-[20px]' />
-            ))}
+          {order.by === 'date' && <Arrow />}
         </div>
         <div className='col-start-11'>Size</div>
       </div>
       {files.length ? (
         files.map((file, index) => (
-          <FileView
+          <FileItem
             file={file}
             key={index}
             isSelected={selectedFilesId.includes(file._id)}

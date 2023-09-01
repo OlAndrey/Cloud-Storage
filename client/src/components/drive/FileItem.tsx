@@ -1,18 +1,23 @@
 import { FC, KeyboardEvent, useState } from 'react'
 import { Link } from 'react-router-dom'
+import dayjs from 'dayjs'
 import { IDir, IFile } from '../../types/file'
 import Icon from '../icon/Icon'
 import { sizeFormat } from '../../utils/sizeFormat'
+import localizedFormat from 'dayjs/plugin/localizedFormat'
 
-type FileViewPropTypes = {
+dayjs.extend(localizedFormat)
+
+
+type FileItemPropTypes = {
   handlerEditName?: (editFile: IDir) => void
-  handlerSelect?: (fileId: string) => void
+  handlerSelect: (fileId: string) => void
   file: IFile
-  isSelected?: boolean
+  isSelected: boolean
   isEdited?: boolean
 }
 
-const FileView: FC<FileViewPropTypes> = ({
+const FileView: FC<FileItemPropTypes> = ({
   isSelected,
   isEdited,
   file,
@@ -53,9 +58,7 @@ const FileView: FC<FileViewPropTypes> = ({
         />
       </div>
       <div className='col-start-3 md:col-start-2 col-end-7'>
-        {file.inBasket ? (
-          <div>{file.name}</div>
-        ) : isEdited ? (
+        {isEdited ? (
           <div className='w-34 max-w-full'>
             <input
               className='text-white border-2 bg-zinc-900 focus:border-zinc-400'
@@ -72,7 +75,7 @@ const FileView: FC<FileViewPropTypes> = ({
           </Link>
         )}
       </div>
-      <div className='col-start-7 col-end-11'>{file.updatedAt.slice(0, 10)}</div>
+      <div className='col-start-7 col-end-11'>{dayjs(file.updatedAt).format('ll')}</div>
       <div className='col-start-11'>{file.size ? sizeFormat(file.size) : '-'}</div>
     </div>
   )
