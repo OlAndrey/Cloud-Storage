@@ -1,5 +1,9 @@
 import { FC, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Icon from '../icon/Icon'
+import { useAppSelector } from '../../hooks/redux'
+import { IFile } from '../../types/file'
+import SearchResultItem from './SearchResultItem'
 
 type SearchPropsType = {
   handler?: () => void
@@ -7,37 +11,58 @@ type SearchPropsType = {
 }
 
 const Search: FC<SearchPropsType> = ({ handler, hideInput }) => {
+  const { files, currentDir } = useAppSelector((state) => state.drive)
   const handlerFunc = typeof handler === 'function' ? handler : () => {}
   const [input, setInput] = useState('')
+  const [result, setResult] = useState<IFile[]>([])
+
+  const navigate = useNavigate()
 
   const onSearchButtonClicked = (): void => {
     if (hideInput) handlerFunc()
-    else {
-      // TODO: do search
+    if (input.trim()) {
+      navigate(`/search?q=${input + (currentDir ? '&dir=' + currentDir : '')}`)
     }
   }
 
   const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setInput(e.target.value)
+    console.log(result)
+    const { value } = e.target
+    setInput(value)
+    if (value.length >= 3) setResult(files.filter((file) => file.name.toLowerCase().includes(value.toLowerCase())))
+    else setResult([])
   }
   return (
-    <>
-      <input
-        value={input}
-        onChange={onSearchInputChange}
-        type='text'
-        placeholder='Search this folder'
-        className={`h-9 w-80 max-w-md transform px-3 rounded-lg border-2 bg-zinc-900 border-zinc-400 duration-200 ${
-          hideInput ? 'hidden' : ''
-        }`}
-      />
-      <div
-        onClick={onSearchButtonClicked}
-        className={`${hideInput ? '' : 'relative'} w-8 right-8 cursor-pointer `}
-      >
-        <Icon name='MagnifyingGlassIcon' className='mt-1.5' size={[24, 24]} fill='#ffffff' />
+    <div className='relative w-96 max-w-full'>
+      <div className='relative flex w-full rounded-t-lg border-2 border-zinc-400'>
+        <input
+          value={input}
+          onChange={onSearchInputChange}
+          type='text'
+          placeholder='Search this folder'
+          className={`h-9 w-full rounded-t-lg bg-zinc-900 transform px-3 duration-200 ${
+            hideInput ? 'hidden' : ''
+          }`}
+        />
+        <div
+          onClick={onSearchButtonClicked}
+          className={`${hideInput ? '' : 'absolute'} w-8 right-0 cursor-pointer `}
+        >
+          <Icon name='MagnifyingGlassIcon' className='mt-1.5' size={[24, 24]} fill='#ffffff' />
+        </div>
       </div>
-    </>
+      <div
+        className={`absolute hidden sm:block ${
+          result.length > 0 ? 'w-full rounded-b-lg border-x-2 border-b-2 border-zinc-400' : ''
+        } bg-default z-10`}
+      >
+        <ul>
+          {result.map((item, ind) => (
+            <SearchResultItem key={ind} file={item} navigate={navigate} />
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 }
 

@@ -3,11 +3,10 @@ export interface IFile {
     name: string
     type: 'file' | 'dir'
     user: string
-    inBasket: boolean
+    status: 'EXISTS' | 'TRASHED'
     createdAt: string
     updatedAt: string
     size?: number
-    accessLink: string
 }
 
 export interface IRecentFile extends IFile {

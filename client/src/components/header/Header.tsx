@@ -9,7 +9,7 @@ const Header = () => {
 
   const mainMenu: ReactNode = (
     <div className='hidden sm:flex flex-grow items-center justify-between'>
-      <div className='hidden sm:flex'>
+      <div className='hidden sm:block grow'>
         <Search />
       </div>
 

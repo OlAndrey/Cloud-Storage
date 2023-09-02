@@ -5,6 +5,5 @@ export interface IFormValues {
   lastPassword: string
   currentPassword: string
   confirmPassword: string
-  acceptTerms: boolean
   createFolder: string
 }

@@ -23,7 +23,7 @@ const SideBar = () => {
           <SideBarItem label={'Setting'} to='#' iconName='GearIcon' hideLabel={hideMenu} />
         </div>
 
-        <div className='mt-2 flex sm:hidden mt-2 pl-3'>
+        <div className='mt-2 block sm:hidden mt-2 pl-3'>
           <Search hideInput={hideMenu} handler={() => setHideMenu(false)} />
         </div>
 
