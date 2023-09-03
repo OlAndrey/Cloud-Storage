@@ -146,7 +146,7 @@ const getFiles = async (req, res) => {
     const isOwn = !currentDir || currentDir.user.toString() === req.userId
     let stackDir = []
     if (currentDir) {
-       await updateOpeningDate(req.userId, currentDir._id)
+      await updateOpeningDate(req.userId, currentDir._id)
 
       let parentDir = currentDir
       while (parentDir) {
@@ -204,10 +204,24 @@ const editNameFile = async (req, res) => {
   }
 }
 
+const searchFile = async (req, res) => {
+  try {
+    const searchName = req.query.search
+    const dir = req.query.dir
+    let files = await File.find({ user: req.userId, parent: dir, status: 'EXISTS' })
+    files = files.filter((file) => file.name.toLowerCase().includes(searchName.toLowerCase()))
+    return res.json(files)
+  } catch (e) {
+    console.log(e)
+    return res.status(400).json({ message: 'Search error' })
+  }
+}
+
 module.exports = {
   createDir,
   uploadFile,
   getFiles,
   downloadFile,
-  editNameFile
+  editNameFile,
+  searchFile
 }
