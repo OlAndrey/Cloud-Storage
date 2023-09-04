@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { deleteFile, getFilesFromTrash, restoreFile } from '../../store/reducers/trashSlice'
+import { deleteFile, getFilesFromTrash, restoreFile } from '../../store/reducers/filesSlice'
 import Icon from '../icon/Icon'
-import SideBar from '../menu/SideBar'
-import FileItem from './FileItem'
+import FileItem from '../fileList/FileItem'
+import Container from '../container'
+import ComponentInCenter from '../componentInCenter'
+import FileListTitle from '../fileList/FileListTitle'
 
 const Trash = () => {
   const [selectedFilesId, setSelectedFilesId] = useState<string[]>([])
-  const { error, files, loading } = useAppSelector((state) => state.trash)
+  const { error, files, loading } = useAppSelector((state) => state.files)
   const dispatch = useAppDispatch()
 
   useEffect(() => {
@@ -31,69 +33,42 @@ const Trash = () => {
   }
 
   return (
-    <div className='w-screen flex'>
-      <SideBar />
-      <div className='w-full pt-14 grow'>
-        {error ? (
-          <div className='h-full flex items-center'>
-            <div className='w-full -ml-14 flex justify-center items-center font-medium text-lg'>
-              {error}
-            </div>
-          </div>
-        ) : loading ? (
-          <div className='h-full flex items-center'>
-            <div className='w-full -ml-14 flex justify-center items-center'>
-              <Icon
-                className='animate-spin mr-3'
-                size={[64, 64]}
-                fill='#ffffff'
-                name='SpinnerIcon'
-              />
-            </div>
-          </div>
+    <Container error={error} loading={loading}>
+      <>
+        <div className='pt-3 px-2 md:px-4 flex justify-between align-center'>
+          <div className='text-base sm:text-xl flex-grow'>Trash</div>
+          <button className='pl-2' onClick={handlerRestore}>
+            <Icon
+              name='RestoreIcon'
+              className='transition duration-150 ease-in-out hover:scale-110'
+              fill='#232327'
+              size={[28, 28]}
+            />
+          </button>
+          <button className='pl-2' onClick={handlerDelete}>
+            <Icon
+              name='TrashIcon'
+              className='transition duration-150 ease-in-out hover:scale-110'
+              fill='#ffffff'
+              size={[28, 28]}
+            />
+          </button>
+        </div>
+        <FileListTitle />
+        {files.length ? (
+          files.map((file, index) => (
+            <FileItem
+              file={file}
+              key={index}
+              isSelected={selectedFilesId.includes(file._id)}
+              handlerSelect={handlerSelect}
+            />
+          ))
         ) : (
-          <>
-            <div className='pt-3 px-2 md:px-4 flex justify-between align-center'>
-              <div className='text-base sm:text-xl flex-grow'>Trash</div>
-              <button className='pl-2' onClick={handlerRestore}>
-                <Icon
-                  name='RestoreIcon'
-                  className='transition duration-150 ease-in-out hover:scale-110'
-                  fill='#232327'
-                  size={[28, 28]}
-                />
-              </button>
-              <button className='pl-2' onClick={handlerDelete}>
-                <Icon
-                  name='TrashIcon'
-                  className='transition duration-150 ease-in-out hover:scale-110'
-                  fill='#ffffff'
-                  size={[28, 28]}
-                />
-              </button>
-            </div>
-            <div className='pt-3 px-2 md:px-4 grid grid-cols-12 gap-4'>
-              <div className='col-start-1'>Type</div>
-              <div className='col-start-3 md:col-start-2'>Name</div>
-              <div className='col-start-7'>Modified</div>
-              <div className='col-start-11'>Size</div>
-            </div>
-            {files.length ? (
-              files.map((file, index) => (
-                <FileItem
-                  file={file}
-                  key={index}
-                  isSelected={selectedFilesId.includes(file._id)}
-                  handlerSelect={handlerSelect}
-                />
-              ))
-            ) : (
-              <div className='pt-3 px-2 md:px-4 text-center'>Trash is empty!</div>
-            )}
-          </>
+          <ComponentInCenter>Trash is empty!</ComponentInCenter>
         )}
-      </div>
-    </div>
+      </>
+    </Container>
   )
 }
 

@@ -5,7 +5,7 @@ import { IRecentFile } from '../types/file'
 export const normalizeFiles = (files: IRecentFile[]) => {
   const newFiles: any[] = []
 
-  if (!files.length) return newFiles
+  if (!files.length || !files[0].author) return newFiles
 
   files.forEach((item, i) => {
     if (i === 0 || files[i - 1]) {

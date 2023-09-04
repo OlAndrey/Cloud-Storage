@@ -1,19 +1,15 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './reducers/authSlice'
-import fileReducer from './reducers/fileSlice'
+import driveReducer from './reducers/driveSlice'
 import uploadReducer from './reducers/uploadSlice'
-import trashReducer from './reducers/trashSlice'
-import recentReducer from './reducers/recentSlice'
-import searchReducer from './reducers/searchSlice'
+import filesReducer from './reducers/filesSlice'
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    drive: fileReducer,
+    drive: driveReducer,
     upload: uploadReducer,
-    trash: trashReducer,
-    recent: recentReducer,
-    search: searchReducer
+    files: filesReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false

@@ -8,7 +8,6 @@ import localizedFormat from 'dayjs/plugin/localizedFormat'
 
 dayjs.extend(localizedFormat)
 
-
 type FileItemPropTypes = {
   handlerEditName?: (editFile: IDir) => void
   handlerSelect: (fileId: string) => void
@@ -17,13 +16,12 @@ type FileItemPropTypes = {
   isEdited?: boolean
 }
 
-const FileItem: FC<FileItemPropTypes> = ({
-  isSelected,
-  isEdited,
-  file,
-  handlerSelect,
-  handlerEditName,
-}) => {
+type EditFileNamePropTypes = {
+  handlerEditName: (editFile: IDir) => void
+  file: IFile
+}
+
+const EditFileName: FC<EditFileNamePropTypes> = ({ file, handlerEditName }) => {
   const fileType = file.name.includes('.')
     ? '.' + file.name.split('.')[file.name.split('.').length - 1]
     : ''
@@ -42,6 +40,27 @@ const FileItem: FC<FileItemPropTypes> = ({
   }
 
   return (
+    <div className='w-34 max-w-full'>
+      <input
+        className='text-white border-2 bg-zinc-900 focus:border-zinc-400'
+        onKeyDown={handlerEdit}
+        onChange={(e) => setName(e.target.value)}
+        value={name}
+        autoFocus
+      />
+      {fileType}
+    </div>
+  )
+}
+
+const FileItem: FC<FileItemPropTypes> = ({
+  isSelected,
+  isEdited,
+  file,
+  handlerSelect,
+  handlerEditName,
+}) => {
+  return (
     <div
       className={`grid grid-cols-12 items-center gap-4 py-1.5 px-2 md:px-4 hover:px-0 hover:md:px-2 duration-200 transition-all cursor-pointer ${
         isSelected ? 'bg-blue-500/25' : ''
@@ -58,17 +77,8 @@ const FileItem: FC<FileItemPropTypes> = ({
         />
       </div>
       <div className='col-start-3 md:col-start-2 col-end-7'>
-        {isEdited ? (
-          <div className='w-34 max-w-full'>
-            <input
-              className='text-white border-2 bg-zinc-900 focus:border-zinc-400'
-              onKeyDown={handlerEdit}
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              autoFocus
-            />
-            {fileType}
-          </div>
+        {isEdited && typeof handlerEditName === 'function' ? (
+          <EditFileName file={file} handlerEditName={handlerEditName} />
         ) : (
           <Link to={`/drive/${file.type === 'dir' ? 'folders' : 'file'}/${file._id}`}>
             {file.name}

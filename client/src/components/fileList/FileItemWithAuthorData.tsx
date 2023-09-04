@@ -13,6 +13,7 @@ type FileItemPropTypes = {
 }
 
 const FileItem: FC<FileItemPropTypes> = ({ file }) => {
+  console.log(file)
   return (
     <div className={'grid grid-cols-12 items-center gap-4 py-1.5 px-2 md:px-4'}>
       <div className='col-start-1'>

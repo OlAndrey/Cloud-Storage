@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form'
-import { createDir, setPopupDisplay } from '../../store/reducers/fileSlice'
+import { createDir, setPopupDisplay } from '../../store/reducers/driveSlice'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import Icon from '../icon/Icon'
 import { IFormValues } from '../../types/form'

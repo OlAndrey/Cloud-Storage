@@ -1,5 +1,5 @@
-import { FC, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { FC, useEffect, useState } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import Icon from '../icon/Icon'
 import { useAppSelector } from '../../hooks/redux'
 import { IFile } from '../../types/file'
@@ -16,7 +16,12 @@ const Search: FC<SearchPropsType> = ({ handler, hideInput }) => {
   const [input, setInput] = useState('')
   const [result, setResult] = useState<IFile[]>([])
 
+  const location = useLocation()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if(location.pathname.includes('/search')) setResult([])
+  }, [location])
 
   const onSearchButtonClicked = (): void => {
     if (hideInput) handlerFunc()
