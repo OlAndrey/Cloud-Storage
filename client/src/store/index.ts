@@ -4,6 +4,7 @@ import fileReducer from './reducers/fileSlice'
 import uploadReducer from './reducers/uploadSlice'
 import trashReducer from './reducers/trashSlice'
 import recentReducer from './reducers/recentSlice'
+import searchReducer from './reducers/searchSlice'
 
 const store = configureStore({
   reducer: {
@@ -11,7 +12,8 @@ const store = configureStore({
     drive: fileReducer,
     upload: uploadReducer,
     trash: trashReducer,
-    recent: recentReducer
+    recent: recentReducer,
+    search: searchReducer
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({
     serializableCheck: false

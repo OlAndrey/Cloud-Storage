@@ -3,13 +3,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { IRecentFile } from '../../types/file'
 import axios from '../../utils/axios'
 
-interface TrashState {
+interface RecentState {
   loading: boolean
   files: IRecentFile[]
   error: string
 }
 
-const initialState: TrashState = {
+const initialState: RecentState = {
   loading: false,
   files: [],
   error: '',

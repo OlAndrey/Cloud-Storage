@@ -17,7 +17,7 @@ type FileItemPropTypes = {
   isEdited?: boolean
 }
 
-const FileView: FC<FileItemPropTypes> = ({
+const FileItem: FC<FileItemPropTypes> = ({
   isSelected,
   isEdited,
   file,
@@ -81,4 +81,4 @@ const FileView: FC<FileItemPropTypes> = ({
   )
 }
 
-export default FileView
+export default FileItem

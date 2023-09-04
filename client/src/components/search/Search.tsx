@@ -21,17 +21,18 @@ const Search: FC<SearchPropsType> = ({ handler, hideInput }) => {
   const onSearchButtonClicked = (): void => {
     if (hideInput) handlerFunc()
     if (input.trim()) {
-      navigate(`/search?q=${input + (currentDir ? '&dir=' + currentDir : '')}`)
+      navigate(`/search/${input}${currentDir ? '/' + currentDir : ''}`)
     }
   }
 
   const onSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    console.log(result)
     const { value } = e.target
     setInput(value)
-    if (value.length >= 3) setResult(files.filter((file) => file.name.toLowerCase().includes(value.toLowerCase())))
+    if (value.length >= 3)
+      setResult(files.filter((file) => file.name.toLowerCase().includes(value.toLowerCase())))
     else setResult([])
   }
+
   return (
     <div className='relative w-96 max-w-full'>
       <div className='relative flex w-full rounded-t-lg border-2 border-zinc-400'>
