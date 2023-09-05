@@ -104,4 +104,16 @@ const getMe = async (req, res) => {
   }
 }
 
-module.exports = { register, login, getMe }
+const editUserName = async (req, res) => {
+  try {
+    const { name } = req.body
+    const user = await User.findByIdAndUpdate(req.userId, { $set: { name } }, {new: true})
+
+    res.status(200).json({ user })
+  } catch (error) {
+    console.log(error)
+    error(req, res)
+  }
+}
+
+module.exports = { register, login, getMe, editUserName }

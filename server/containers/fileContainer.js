@@ -210,7 +210,7 @@ const searchFile = async (req, res) => {
     const dir = req.query.dir
     let files = await File.find({ user: req.userId, parent: dir, status: 'EXISTS' })
     files = files.filter((file) => file.name.toLowerCase().includes(searchName.toLowerCase()))
-    return res.json(files)
+    return res.json({ files })
   } catch (e) {
     console.log(e)
     return res.status(400).json({ message: 'Search error' })
