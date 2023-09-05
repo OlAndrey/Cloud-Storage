@@ -10,6 +10,7 @@ import Icon from './components/icon/Icon'
 import Trash from './components/drive/Trash'
 import Recent from './components/recent/Recent'
 import SearchResultPage from './components/search/SearchResultPage'
+import Preferences from './components/preferences/Preferences'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -41,7 +42,8 @@ const App = () => {
           <Route path='/trash' element={<Trash />} />
           <Route path='/search/:q/:dir' element={<SearchResultPage />} />
           <Route path='/search/:q' element={<SearchResultPage />} />
-          {/* <Route path='/*' element={<Navigate to='/drive' replace={true} />} /> */}
+          <Route path='/preferences' element={<Preferences />} />
+          <Route path='/*' element={<Navigate to='/drive' replace={true} />} />
         </Routes>
       ) : (
         <Routes>

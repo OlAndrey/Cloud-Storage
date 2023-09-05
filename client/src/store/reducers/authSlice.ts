@@ -7,23 +7,16 @@ interface AuthState {
   loading: boolean
   authCheck: boolean
   userInfo: IUserInfo | null
-  userToken: string | null
-  error: string | null
+  userToken: string
+  error: string
 }
 
 const initialState: AuthState = {
   loading: false,
-  authCheck: true,
-  userInfo: {
-    _id: '64d3aa32bf8f7f96d196ff96',
-    name: 'Andrey',
-    email: 'fortest1@test.com',
-    diskSpace: 10737418240,
-    usedSpace: 0,
-    files: [],
-  },
-  userToken: null,
-  error: 'Error',
+  authCheck: false,
+  userInfo: null,
+  userToken: '',
+  error: '',
 }
 
 export const registerUser = createAsyncThunk(
@@ -77,12 +70,29 @@ export const authCheckThunk = createAsyncThunk('auth/check', async (_, { rejectW
   }
 })
 
+export const editName = createAsyncThunk(
+  'auth/edit',
+  async ({ name }: { name: string }, { rejectWithValue }) => {
+    try {
+      const res = await axios.put('/api/auth/editname', { name })
+
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message)
+      } else {
+        return rejectWithValue(error.message)
+      }
+    }
+  },
+)
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     resetError: (state) => {
-      state.error = null
+      state.error = ''
     },
     authChecked: (state) => {
       state.authCheck = true
@@ -92,7 +102,7 @@ const authSlice = createSlice({
     builder
       .addCase(registerUser.pending, (state) => {
         state.loading = true
-        state.error = null
+        state.error = ''
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         const { user, token } = action.payload
@@ -109,7 +119,7 @@ const authSlice = createSlice({
     builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true
-        state.error = null
+        state.error = ''
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         const { user, token } = action.payload
@@ -135,6 +145,23 @@ const authSlice = createSlice({
       })
       .addCase(authCheckThunk.rejected, (state) => {
         state.authCheck = true
+      })
+
+    builder
+      .addCase(editName.pending, (state) => {
+        state.loading = true
+        state.error = ''
+      })
+      .addCase(editName.fulfilled, (state, action) => {
+        const { user } = action.payload
+
+        state.loading = false
+        state.userInfo = user
+      })
+      .addCase(editName.rejected, (state, action) => {
+        const errorMsg = action.payload ? action.payload : ''
+        state.loading = false
+        state.error = errorMsg as string
       })
   },
 })
