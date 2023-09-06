@@ -107,13 +107,37 @@ const getMe = async (req, res) => {
 const editUserName = async (req, res) => {
   try {
     const { name } = req.body
-    const user = await User.findByIdAndUpdate(req.userId, { $set: { name } }, {new: true})
+    const user = await User.findByIdAndUpdate(req.userId, { $set: { name } }, { new: true })
 
     res.status(200).json({ user })
-  } catch (error) {
-    console.log(error)
+  } catch (err) {
+    console.log(err)
     error(req, res)
   }
 }
 
-module.exports = { register, login, getMe, editUserName }
+const editPassword = async (req, res) => {
+  try {
+    console.log('test')
+    const { lastPassword, newPassword } = req.body
+    const user = await User.findOne({ _id: req.userId })
+    const isPasswordCorrect = bcrypt.compare(lastPassword, user.password)
+    if (isPasswordCorrect) {
+      const salt = 5
+      const hash = await bcrypt.hash(newPassword, salt)
+      const user = await User.findByIdAndUpdate(
+        req.userId,
+        { $set: { password: hash } },
+        { new: true }
+      )
+
+      res.status(200).json({ user })
+    }
+    return res.status(406).json({ message: 'Password is not correct' })
+  } catch (err) {
+    console.log(err)
+    error(req, res)
+  }
+}
+
+module.exports = { register, login, getMe, editUserName, editPassword }
