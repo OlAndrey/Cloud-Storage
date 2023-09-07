@@ -87,6 +87,26 @@ export const editName = createAsyncThunk(
   },
 )
 
+export const editPassword = createAsyncThunk(
+  'auth/password',
+  async (
+    { newPassword, lastPassword }: { newPassword: string; lastPassword: string },
+    { rejectWithValue },
+  ) => {
+    try {
+      const res = await axios.put('/api/auth/password', { lastPassword, newPassword })
+
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message)
+      } else {
+        return rejectWithValue(error.message)
+      }
+    }
+  },
+)
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -163,6 +183,23 @@ const authSlice = createSlice({
         state.loading = false
         state.error = errorMsg as string
       })
+
+      builder
+        .addCase(editPassword.pending, (state) => {
+          state.loading = true
+          state.error = ''
+        })
+        .addCase(editPassword.fulfilled, (state, action) => {
+          const { user } = action.payload
+  
+          state.loading = false
+          state.userInfo = user
+        })
+        .addCase(editPassword.rejected, (state, action) => {
+          const errorMsg = action.payload ? action.payload : ''
+          state.loading = false
+          state.error = errorMsg as string
+        })
   },
 })
 

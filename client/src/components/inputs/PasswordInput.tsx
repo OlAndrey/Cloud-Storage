@@ -1,5 +1,5 @@
 import { FC, useState } from 'react'
-import { FieldError, Path, UseFormRegister, ValidationRule } from 'react-hook-form'
+import { FieldError, Path, UseFormRegister, Validate, ValidationRule } from 'react-hook-form'
 import { IFormValues } from '../../types/form'
 import Icon from '../icon/Icon'
 
@@ -7,6 +7,7 @@ interface InputProps {
   label: Path<IFormValues>
   disabled?: boolean
   register: UseFormRegister<IFormValues>
+  validate?: Validate<string, IFormValues> | Record<string, Validate<string, IFormValues>>
   minLength?: ValidationRule<number> | undefined
   maxLength?: ValidationRule<number> | undefined
   placeholder: string
@@ -19,6 +20,7 @@ const PasswordInput: FC<InputProps> = ({
   label,
   disabled,
   register,
+  validate,
   minLength,
   maxLength,
   placeholder,
@@ -41,6 +43,7 @@ const PasswordInput: FC<InputProps> = ({
           minLength,
           maxLength,
           pattern,
+          validate
         })}
         className={`h-11 w-full py-2 pl-2 rounded-lg border-2 bg-zinc-900 duration-100 ${
           error ? 'border-red-400' : 'border-zinc-400'

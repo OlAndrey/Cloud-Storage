@@ -1,4 +1,5 @@
 import AccountDetails from './AccountDetails'
+import ChangePassword from './ChangePassword'
 
 const AccountTab = () => {
   return (
@@ -7,7 +8,9 @@ const AccountTab = () => {
         <div className='flex flex-1 flex-col space-y-8'>
           <AccountDetails />
         </div>
-        <div className='flex flex-1 flex-col space-y-8'></div>
+        <div className='flex flex-1 flex-col space-y-8'>
+          <ChangePassword />
+        </div>
       </div>
     </div>
   )
