@@ -4,7 +4,7 @@ const FileServices = require('../services/FileServices')
 
 const getFilesFromBasket = async (req, res) => {
   try {
-    const files = await File.find({ user: req.userId, status: 'TRASHED'})
+    const files = await File.find({ user: req.userId, status: 'TRASHED' })
 
     return res.status(200).json({ files })
   } catch (e) {
@@ -59,35 +59,47 @@ const restoreFile = async (req, res) => {
   }
 }
 
+const handlerDeleteFile = (id, userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const file = await File.findOne({ _id: id, user: userId })
+      if (!file) {
+        return reject({ message: 'file not found' })
+      }
+
+      const user = await User.findOne({ _id: userId })
+
+      FileServices.deleteFile(file)
+      await file.deleteOne()
+
+      if (file.child.length) {
+        const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
+        await Promise.all(
+          childFile.map((file) => {
+            user.usedSpace -= file.size
+            return file.deleteOne()
+          })
+        )
+      }
+
+      user.usedSpace -= file.size
+      await user.save()
+      return resolve({ message: 'File was deleted' })
+    } catch (error) {
+      console.log(error)
+      reject({ message: 'Delete error' })
+    }
+  })
+}
+
 const deleteFile = async (req, res) => {
   try {
-    const file = await File.findOne({ _id: req.query.id, user: req.userId })
-    if (!file) {
-      return res.status(400).json({ message: 'file not found' })
-    }
-
-    const user = await User.findOne({ _id: req.userId })
-
-    FileServices.deleteFile(file)
-    await file.deleteOne()
-
-    if (file.child.length) {
-      const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
-      await Promise.all(
-        childFile.map((file) => {
-          user.usedSpace -= file.size
-          return file.deleteOne()
-        })
-      )
-    }
-
-    user.usedSpace -= file.size
-    await user.save()
-    return res.json({ message: 'File was deleted' })
+    const message = await handlerDeleteFile(req.query.id, req.userId)
+    return res.json({ message })
   } catch (error) {
     console.log(error)
-    res.status(500).json({ message: 'Delete error' })
+    res.status(500).json({ message: error })
   }
 }
 
-module.exports = { getFilesFromBasket, moveToBasket, restoreFile, deleteFile }
+module.exports = { getFilesFromBasket, moveToBasket, restoreFile, deleteFile, handlerDeleteFile }

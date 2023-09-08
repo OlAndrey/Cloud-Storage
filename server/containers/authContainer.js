@@ -4,6 +4,7 @@ const User = require('../models/User')
 const File = require('../models/File')
 const fileServices = require('../services/FileServices')
 const Recent = require('../models/Recent')
+const { deleteFile, handlerDeleteFile } = require('./basketContainer')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -61,7 +62,7 @@ const login = async (req, res) => {
       return res.status(406).json({ message: 'Email or password is incorrect!!!' })
     }
 
-    const isPasswordCorrect = bcrypt.compare(password, user.password)
+    const isPasswordCorrect = await bcrypt.compare(password, user.password)
     if (!isPasswordCorrect) {
       return res.status(406).json({
         message: 'Email or password is incorrect!!!'
@@ -118,21 +119,19 @@ const editUserName = async (req, res) => {
 
 const editPassword = async (req, res) => {
   try {
-    console.log('test')
     const { lastPassword, newPassword } = req.body
     const user = await User.findOne({ _id: req.userId })
-    const isPasswordCorrect = bcrypt.compare(lastPassword, user.password)
+    const isPasswordCorrect = await bcrypt.compare(lastPassword, user.password)
+
     if (isPasswordCorrect) {
       const salt = 5
       const hash = await bcrypt.hash(newPassword, salt)
-      const user = await User.findByIdAndUpdate(
-        req.userId,
-        { $set: { password: hash } },
-        { new: true }
-      )
+      user.password = hash
+      await user.save()
 
-      res.status(200).json({ user })
+      return res.status(200).json({ user })
     }
+
     return res.status(406).json({ message: 'Password is not correct' })
   } catch (err) {
     console.log(err)
@@ -140,4 +139,22 @@ const editPassword = async (req, res) => {
   }
 }
 
-module.exports = { register, login, getMe, editUserName, editPassword }
+const deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findOne({ _id: req.userId })
+
+    const files = await File.find({ user: req.userId })
+
+    if (files.length) {
+      await Promise.all(files.map((file) => handlerDeleteFile(file._id, file.user)))
+    }
+
+    await user.deleteOne()
+    return res.status(200).json({ message: 'Success' })
+  } catch (err) {
+    console.log(err)
+    res.status(500).json(err)
+  }
+}
+
+module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount }
