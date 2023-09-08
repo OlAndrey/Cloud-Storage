@@ -109,9 +109,9 @@ const ChangePassword = () => {
             <button
               type='submit'
               disabled={!isValid}
-              className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+              className='bg-blue-500 disabled:bg-gray-700 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
             >
-              Create
+              Change
             </button>
           </div>
         </form>
