@@ -13,17 +13,9 @@ interface AuthState {
 
 const initialState: AuthState = {
   loading: false,
-  authCheck: true,
-  userInfo: {
-    _id: '64d3aa32bf8f7f96d196ff96',
-    name: 'Andry Oleynik1',
-    email: 'fortest1@test.com',
-    diskSpace: 10737418240,
-    usedSpace: 21335889,
-    files: [],
-  },
-  userToken:
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZDNhYTMyYmY4ZjdmOTZkMTk2ZmY5NiIsImlhdCI6MTY5Mzk0NTIxNywiZXhwIjoxNjk0MDMxNjE3fQ._QGYpZgdc0clUPiSRq_qF4wtb3OjeaGKdgxg3Dfis60',
+  authCheck: false,
+  userInfo: null,
+  userToken: '',
   error: '',
 }
 
@@ -105,7 +97,7 @@ export const editPassword = createAsyncThunk(
   },
 )
 
-export const deleteUser = createAsyncThunk('auth/delete', async (_, {rejectWithValue}) => {
+export const deleteUser = createAsyncThunk('auth/delete', async (_, { rejectWithValue }) => {
   try {
     const res = await axios.delete('/api/auth')
 
@@ -115,6 +107,23 @@ export const deleteUser = createAsyncThunk('auth/delete', async (_, {rejectWithV
     if (error.response && error.response.data.message)
       return rejectWithValue(error.response.data.message)
     return rejectWithValue(error.message)
+  }
+})
+
+export const changeAvatar = createAsyncThunk('auth/avatar', async (file: File) => {
+  try {
+    const formData = new FormData()
+    formData.append('file', file)
+    for (const p of formData.entries()) console.log(p)
+
+    const res = await axios.post('/api/auth/avatar', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+
+    return res.data
+  } catch (error: any) {
+    if (error.response && error.response.data.message) return alert(error.response.data.message)
+    return alert(error.message)
   }
 })
 
@@ -225,6 +234,14 @@ const authSlice = createSlice({
         alert(action.payload)
         state.loading = false
       })
+
+    builder
+      .addCase(changeAvatar.pending, () => undefined)
+      .addCase(changeAvatar.fulfilled, (state, action) => {
+        const user = action.payload?.user
+        state.userInfo = user ? user : state.userInfo
+      })
+      .addCase(changeAvatar.rejected, () => undefined)
   },
 })
 

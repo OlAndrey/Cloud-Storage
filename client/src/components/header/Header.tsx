@@ -24,7 +24,7 @@ const Header = () => {
 
   return (
     <div
-      className={`fixed h-14 w-screen flex items-center ${
+      className={`fixed z-30 bg-default h-14 w-screen flex items-center ${
         userInfo ? 'border-b border-gray-5' : ''
       }`}
     >

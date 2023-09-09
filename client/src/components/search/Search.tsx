@@ -20,7 +20,7 @@ const Search: FC<SearchPropsType> = ({ handler, hideInput }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if(location.pathname.includes('/search')) setResult([])
+    if (location.pathname.includes('/search')) setResult([])
   }, [location])
 
   const onSearchButtonClicked = (): void => {
@@ -40,7 +40,11 @@ const Search: FC<SearchPropsType> = ({ handler, hideInput }) => {
 
   return (
     <div className='relative w-96 max-w-full'>
-      <div className='relative flex w-full rounded-t-lg border-2 border-zinc-400'>
+      <div
+        className={`relative flex w-full rounded-t-lg ${
+          hideInput ? '' : 'border-2'
+        } border-zinc-400`}
+      >
         <input
           value={input}
           onChange={onSearchInputChange}

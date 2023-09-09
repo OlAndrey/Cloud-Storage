@@ -17,7 +17,7 @@ const SideBar = () => {
 
   return (
     <div
-      className={`h-screen relative w-16 sm:w-64 pt-14 flex flex-col duration-200 transition-all ${
+      className={`h-screen fixed z-20 bg-default w-16 sm:w-64 pt-14 flex flex-col duration-200 transition-all ${
         hideMenu ? '' : 'w-screen'
       }`}
     >

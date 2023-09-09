@@ -11,6 +11,7 @@ import Trash from './components/drive/Trash'
 import Recent from './components/recent/Recent'
 import SearchResultPage from './components/search/SearchResultPage'
 import Preferences from './components/preferences/Preferences'
+import SideBar from './components/menu/SideBar'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -25,8 +26,9 @@ const App = () => {
   }, [])
 
   return (
-    <div className='h-screen bg-default text-white'>
+    <div className='min-h-screen bg-default text-white'>
       <Header />
+      {userInfo ? <SideBar /> : ''}
       {!authCheck ? (
         <div className='h-full flex items-center'>
           <div className='w-screen flex justify-center items-center'>

@@ -13,5 +13,5 @@ export interface IUserInfo {
     email: string
     diskSpace: number
     usedSpace: number
-    files: unknown
+    avatarUrl: string
 }
