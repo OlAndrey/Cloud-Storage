@@ -17,6 +17,7 @@ app.use(
 )
 app.use(fileUpload())
 app.use(express.json())
+app.use(express.static('static'))
 
 app.use('/api/auth', authRoute)
 app.use('/api/file', fileRoute)

@@ -1,10 +1,13 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const path = require('path')
+const Uuid = require('uuid')
 const User = require('../models/User')
 const File = require('../models/File')
 const fileServices = require('../services/FileServices')
 const Recent = require('../models/Recent')
-const { deleteFile, handlerDeleteFile } = require('./basketContainer')
+const { handlerDeleteFile } = require('./basketContainer')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -37,7 +40,16 @@ const register = async (req, res) => {
           { expiresIn: '1d' }
         )
 
-        res.status(200).json({ token, user })
+        res.status(200).json({
+          token,
+          user: {
+            id: user._id,
+            email: user.email,
+            diskSpace: user.diskSpace,
+            usedSpace: user.usedSpace,
+            avatarUrl: user.avatarUrl
+          }
+        })
       } catch (e) {
         res.status(406).json({
           error: e,
@@ -76,7 +88,16 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     )
-    res.status(200).json({ token, user })
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+        avatarUrl: user.avatarUrl
+      }
+    })
   } catch (e) {
     error(req, res)
   }
@@ -99,7 +120,16 @@ const getMe = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     )
-    res.status(200).json({ token, user })
+    res.status(200).json({
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+        avatarUrl: user.avatarUrl
+      }
+    })
   } catch (error) {
     res.status(406).json({ message: 'No access' })
   }
@@ -110,7 +140,15 @@ const editUserName = async (req, res) => {
     const { name } = req.body
     const user = await User.findByIdAndUpdate(req.userId, { $set: { name } }, { new: true })
 
-    res.status(200).json({ user })
+    res.status(200).json({
+      user: {
+        id: user._id,
+        email: user.email,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+        avatarUrl: user.avatarUrl
+      }
+    })
   } catch (err) {
     console.log(err)
     error(req, res)
@@ -129,7 +167,15 @@ const editPassword = async (req, res) => {
       user.password = hash
       await user.save()
 
-      return res.status(200).json({ user })
+      return res.status(200).json({
+        user: {
+          id: user._id,
+          email: user.email,
+          diskSpace: user.diskSpace,
+          usedSpace: user.usedSpace,
+          avatarUrl: user.avatarUrl
+        }
+      })
     }
 
     return res.status(406).json({ message: 'Password is not correct' })
@@ -157,4 +203,33 @@ const deleteAccount = async (req, res) => {
   }
 }
 
-module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount }
+const uploadAvatar = async (req, res) => {
+  try {
+    const file = req.files.file
+    const user = await User.findById(req.userId)
+    const avatarName = Uuid.v4() + file.mimetype.replace('image/', '.')
+
+    const pathAvatar = path.join(__dirname, '../', 'static', user.avatarUrl)
+    if (fs.existsSync(pathAvatar) && !(pathAvatar !== process.env.DEFAULT_AVATAR_URL))
+      fs.unlinkSync(pathAvatar)
+
+    file.mv(path.join(__dirname, '../', 'static', avatarName))
+    user.avatarUrl = avatarName
+    await user.save()
+
+    return res.status(200).json({
+      user: {
+        id: user._id,
+        email: user.email,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+        avatarUrl: user.avatarUrl
+      }
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({ message: 'Upload avatar error' })
+  }
+}
+
+module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }

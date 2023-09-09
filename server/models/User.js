@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema(
       required: true
     },
     avatarUrl: {
-      type: String
+      type: String,
+      default: 'f1106b2a-a3a4-4628-8fa2-fcb19a7a7858.png'
     },
     email: {
       type: String,
