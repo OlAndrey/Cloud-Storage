@@ -8,7 +8,7 @@ export interface IRegisterUserValue extends ILoginUserValue {
 }
 
 export interface IUserInfo {
-    _id: string
+    id: string
     name: string
     email: string
     diskSpace: number

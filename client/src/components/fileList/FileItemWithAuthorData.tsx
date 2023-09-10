@@ -5,6 +5,7 @@ import Icon from '../icon/Icon'
 import { IRecentFile } from '../../types/file'
 import { sizeFormat } from '../../utils/sizeFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import PictureAvatar from '../image/PictureAvatar'
 
 dayjs.extend(localizedFormat)
 
@@ -13,7 +14,6 @@ type FileItemPropTypes = {
 }
 
 const FileItem: FC<FileItemPropTypes> = ({ file }) => {
-  console.log(file)
   return (
     <div className={'grid grid-cols-12 items-center gap-4 py-1.5 px-2 md:px-4'}>
       <div className='col-start-1'>
@@ -28,7 +28,10 @@ const FileItem: FC<FileItemPropTypes> = ({ file }) => {
           {file.name}
         </Link>
       </div>
-      <div className='col-start-6 md:col-start-5 col-end-8'>{file.author.name}</div>
+      <div className='col-start-6 md:col-start-5 col-end-8 flex items-center'>
+        <PictureAvatar src={`http://localhost:5000/${file.author.avatar}`} diameter={24} />
+        <span className='hidden md:inline ml-2'>{file.author.name}</span>
+      </div>
       <div className='col-start-8 col-end-11'>{dayjs(file.newlyOpened).format('ll')}</div>
       <div className='col-start-11'>{file.size ? sizeFormat(file.size) : '-'}</div>
     </div>

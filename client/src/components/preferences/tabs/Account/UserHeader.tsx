@@ -1,6 +1,7 @@
 import { ChangeEvent, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux'
 import { changeAvatar } from '../../../../store/reducers/authSlice'
+import PictureAvatar from '../../../image/PictureAvatar'
 
 const UserHeader = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -10,19 +11,20 @@ const UserHeader = () => {
   const handlerFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e?.target?.files) {
       const file = e.target.files[0]
-      dispatch(changeAvatar( file ))
+      dispatch(changeAvatar(file))
     }
   }
 
   return (
     <div className='relative py-3'>
       <div className='h-28' onClick={() => setIsModalOpen(false)}></div>
-      <PictureAvatar
-        src={`http://localhost:5000/${userInfo?.avatarUrl}`}
-        diameter={110}
-        className='absolute top-0 inset-x-1/2 -ml-14 cursor-pointer'
+      <div
+        className='absolute top-0 inset-x-1/2 -ml-14 w-28 cursor-pointer'
         onClick={() => setIsModalOpen(true)}
-      />
+      >
+        <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={110} />
+      </div>
+
       <div
         className={`z-10 absolute top-20 left-1/2 py-2 ${
           isModalOpen ? 'block' : 'hidden'
@@ -45,27 +47,6 @@ const UserHeader = () => {
       <h1 className='truncate text-lg font-medium'>{userInfo?.name}</h1>
       <h2 className='truncate text-sm text-center text-gray-400'>{userInfo?.email}</h2>
     </div>
-  )
-}
-function PictureAvatar({
-  src,
-  diameter,
-  onClick,
-  className = '',
-}: {
-  src: string
-  diameter: number
-  onClick: () => void
-  className?: string
-}): JSX.Element {
-  return (
-    <img
-      style={{ width: diameter, height: diameter }}
-      className={`${className} select-none rounded-full`}
-      src={src}
-      onClick={onClick}
-      draggable={false}
-    />
   )
 }
 

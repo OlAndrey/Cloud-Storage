@@ -10,7 +10,7 @@ type ContainerPropTypes = {
 
 const Container: FC<ContainerPropTypes> = ({ children, error, loading }) => {
   return (
-    <div className='w-screen pt-14 pl-16 sm:pl-64'>
+    <div className='w-screen pt-14 pl-16 sm:pl-48 lg:pl-64'>
       {error ? (
         <ComponentInCenter>{error}</ComponentInCenter>
       ) : loading ? (
