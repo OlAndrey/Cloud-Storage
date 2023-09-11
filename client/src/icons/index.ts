@@ -142,6 +142,13 @@ const ArrowDownIcon = [
   '0 0 24 24'
 ]
 
+const LogOutIcon = [
+  `
+    <path d="M14 20H6C4.89543 20 4 19.1046 4 18L4 6C4 4.89543 4.89543 4 6 4H14M10 12H21M21 12L18 15M21 12L18 9" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  `,
+  '0 0 24 24'
+]
+
 const icons: Record<string, string[]> = {
   EyeIcon,
   EyeOffIcon,
@@ -161,7 +168,8 @@ const icons: Record<string, string[]> = {
   EditIcon,
   RestoreIcon,
   ArrowUpIcon,
-  ArrowDownIcon
+  ArrowDownIcon,
+  LogOutIcon
 }
 
 export default icons

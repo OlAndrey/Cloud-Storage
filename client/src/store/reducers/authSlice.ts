@@ -134,6 +134,12 @@ const authSlice = createSlice({
     resetError: (state) => {
       state.error = ''
     },
+    logOut: (state) => {
+      window.localStorage.removeItem('userToken')
+
+      state.userInfo = null
+      state.userToken = ''
+    },
     authChecked: (state) => {
       state.authCheck = true
     },
@@ -245,6 +251,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { authChecked, resetError } = authSlice.actions
+export const { authChecked, logOut, resetError } = authSlice.actions
 
 export default authSlice.reducer
