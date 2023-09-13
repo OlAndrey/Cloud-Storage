@@ -24,7 +24,7 @@ const UploadFile: FC<UploadFilePropsType> = ({ file }) => {
             <Icon name='FileIcon' size={[24, 24]} fill='#ffffff' />
           </div>
         )}
-        <div className='flex-grow'>{file.name}</div>
+        <div className='flex-grow truncate'>{file.name}</div>
         <button
           type='button'
           className='p-1 bg-transparent text-gray-400 transition duration-150 ease-in-out hover:text-white'

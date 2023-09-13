@@ -5,6 +5,7 @@ import { IDir, IFile } from '../../types/file'
 import Icon from '../icon/Icon'
 import { sizeFormat } from '../../utils/sizeFormat'
 import localizedFormat from 'dayjs/plugin/localizedFormat'
+import { downloadFile } from '../../utils/download'
 
 dayjs.extend(localizedFormat)
 
@@ -76,13 +77,19 @@ const FileItem: FC<FileItemPropTypes> = ({
           fill='#ffffff'
         />
       </div>
-      <div className='col-start-3 md:col-start-2 col-end-7'>
+      <div className='col-start-3 truncate md:col-start-2 col-end-7'>
         {isEdited && typeof handlerEditName === 'function' ? (
           <EditFileName file={file} handlerEditName={handlerEditName} />
+        ) : file.type === 'dir' ? (
+          <Link to={`/drive/folders/${file._id}`}>{file.name}</Link>
         ) : (
-          <Link to={`/drive/${file.type === 'dir' ? 'folders' : 'file'}/${file._id}`}>
+          <div
+            onClick={() => {
+              if (file.status !== 'TRASHED') downloadFile([file._id])
+            }}
+          >
             {file.name}
-          </Link>
+          </div>
         )}
       </div>
       <div className='col-start-7 col-end-11'>{dayjs(file.updatedAt).format('ll')}</div>
