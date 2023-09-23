@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     },
     avatarUrl: {
       type: String,
-      default: 'f1106b2a-a3a4-4628-8fa2-fcb19a7a7858.png'
+      default: '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg'
     },
     email: {
       type: String,
@@ -27,12 +27,11 @@ const userSchema = mongoose.Schema(
       type: Number,
       default: 0
     },
-    files: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'File'
-      }
-    ]
+    plan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Plan',
+      default: '650ebaaac94210cbadc5be42'
+    }
   },
   { timestamps: true }
 )

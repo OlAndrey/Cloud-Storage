@@ -18,8 +18,8 @@ const updateOpeningDate = async (userId, currentDirId) => {
 }
 
 const getUserDate = async (userId) => {
-  const { _id, name } = await User.findOne({ _id: userId })
-  return { id: _id, name, avatar: '' }
+  const { _id, name, avatarUrl } = await User.findOne({ _id: userId })
+  return { id: _id, name, avatar: avatarUrl ? avatarUrl : '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg' }
 }
 
 const getFilesWithOpeningDate = async (userId) => {

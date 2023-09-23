@@ -15,6 +15,16 @@ const error = (req, res) => {
   })
 }
 
+const normalizeUserData = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  diskSpace: user.diskSpace,
+  usedSpace: user.usedSpace,
+  avatarUrl: user.avatarUrl,
+  plan: user.plan
+})
+
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body
@@ -42,13 +52,7 @@ const register = async (req, res) => {
 
         res.status(200).json({
           token,
-          user: {
-            id: user._id,
-            email: user.email,
-            diskSpace: user.diskSpace,
-            usedSpace: user.usedSpace,
-            avatarUrl: user.avatarUrl
-          }
+          user: normalizeUserData(user)
         })
       } catch (e) {
         res.status(406).json({
@@ -90,13 +94,7 @@ const login = async (req, res) => {
     )
     res.status(200).json({
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        diskSpace: user.diskSpace,
-        usedSpace: user.usedSpace,
-        avatarUrl: user.avatarUrl
-      }
+      user: normalizeUserData(user)
     })
   } catch (e) {
     error(req, res)
@@ -122,13 +120,7 @@ const getMe = async (req, res) => {
     )
     res.status(200).json({
       token,
-      user: {
-        id: user._id,
-        email: user.email,
-        diskSpace: user.diskSpace,
-        usedSpace: user.usedSpace,
-        avatarUrl: user.avatarUrl
-      }
+      user: normalizeUserData(user)
     })
   } catch (error) {
     res.status(406).json({ message: 'No access' })
@@ -141,13 +133,7 @@ const editUserName = async (req, res) => {
     const user = await User.findByIdAndUpdate(req.userId, { $set: { name } }, { new: true })
 
     res.status(200).json({
-      user: {
-        id: user._id,
-        email: user.email,
-        diskSpace: user.diskSpace,
-        usedSpace: user.usedSpace,
-        avatarUrl: user.avatarUrl
-      }
+      user: normalizeUserData(user)
     })
   } catch (err) {
     console.log(err)
@@ -168,13 +154,7 @@ const editPassword = async (req, res) => {
       await user.save()
 
       return res.status(200).json({
-        user: {
-          id: user._id,
-          email: user.email,
-          diskSpace: user.diskSpace,
-          usedSpace: user.usedSpace,
-          avatarUrl: user.avatarUrl
-        }
+        user: normalizeUserData(user)
       })
     }
 
@@ -218,13 +198,7 @@ const uploadAvatar = async (req, res) => {
     await user.save()
 
     return res.status(200).json({
-      user: {
-        id: user._id,
-        email: user.email,
-        diskSpace: user.diskSpace,
-        usedSpace: user.usedSpace,
-        avatarUrl: user.avatarUrl
-      }
+      user: normalizeUserData(user)
     })
   } catch (error) {
     console.log(error)
