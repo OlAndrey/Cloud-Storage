@@ -35,7 +35,7 @@ const ChangePassword = () => {
     <div>
       <h1 className='mb-3 text-lg font-medium'>Change Password</h1>
       <div className='rounded-lg border border-gray-10 p-5'>
-        <p className='text-gray-60'>
+        <p className='text-gray-400'>
           Be sure to remember the new password. If you lose it, you won&apos;t be able to access all
           your files. we I strongly recommend using a password manager.{' '}
         </p>

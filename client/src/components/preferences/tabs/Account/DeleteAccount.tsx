@@ -14,7 +14,7 @@ const DeleteAccount = () => {
     <div>
       <h1 className='mb-3 text-lg font-medium'>Delete Account</h1>
       <div className='rounded-lg border border-gray-10 p-5'>
-        <p className='text-gray-60'>
+        <p className='text-gray-400'>
           Once your account is deleted, your files and data will be permanently deleted. Once
           started, this action cannot be undone.
         </p>
