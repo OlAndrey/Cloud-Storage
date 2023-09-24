@@ -31,6 +31,10 @@ const userSchema = mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Plan',
       default: '650ebaaac94210cbadc5be42'
+    },
+    session: {
+      type: String,
+      default: ''
     }
   },
   { timestamps: true }

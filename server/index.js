@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload')
 const authRoute = require('./routes/auth')
 const fileRoute = require('./routes/file')
 const recentRoute = require('./routes/recent')
+const paymentRoute = require('./routes/payment')
 const Plan = require('./models/Plan')
 
 const app = express()
@@ -30,9 +31,11 @@ app.get('/api/plan', async (req, res) => {
     res.status(500).json({ message: 'Something went wrong!' })
   }
 })
+
 app.use('/api/auth', authRoute)
 app.use('/api/file', fileRoute)
 app.use('/api/recent', recentRoute)
+app.use('/api/v1', paymentRoute)
 
 const port = process.env.PORT || 5001
 const server = http.createServer(app)
