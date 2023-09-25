@@ -2,7 +2,7 @@ import { FC, useEffect, useRef, useState } from 'react'
 import AccountTab from './tabs/Account'
 import Container from '../container'
 import PlansTab from './tabs/Plans'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const PREFERENCES_TABS = ['account', 'billing', 'plans'] as const
 type PreferencesTabID = (typeof PREFERENCES_TABS)[number]
@@ -19,6 +19,7 @@ const Preferences = () => {
 
   const [activeTab, setActiveTab] = useState<PreferencesTabID>('account')
   const navigate = useNavigate()
+  const location = useLocation()
   const firstRun = useRef(true)
 
   function updateUrlWithState() {
@@ -34,7 +35,7 @@ const Preferences = () => {
   }, [activeTab])
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
+    const params = new URLSearchParams(location.search)
     const tab = params.get('tab')
 
     if (tab && PREFERENCES_TABS.includes(tab as PreferencesTabID)) {
@@ -42,7 +43,7 @@ const Preferences = () => {
     } else if (!tab) {
       updateUrlWithState()
     }
-  }, [])
+  }, [location])
 
   return (
     <Container error='' loading={false}>

@@ -1,14 +1,8 @@
 import { useEffect, useState } from 'react'
 import PlanSelector from './PlanSelector'
 import Features from './Features'
-
-interface IPlan {
-  _id: string
-  name: string
-  type: 'one_time' | 'subscription'
-  price: number
-  priceId: string
-}
+import { getPlans } from '../../../../utils/plans'
+import { IPlan } from '../../../../types/plan'
 
 const PlansTab = ({ className }: { className: string }) => {
   const intervalSwitch = [
@@ -16,32 +10,18 @@ const PlansTab = ({ className }: { className: string }) => {
     { title: 'lifetime', text: 'Lifetime' },
     { title: 'year', text: 'Annually' },
   ]
-  const [prices, setPrices] = useState<IPlan[]>([
-  ])
+  const [prices, setPrices] = useState<IPlan[]>([])
   const [interval, setInterval] = useState('lifetime')
 
+  const getData = async () => {
+    const data = await getPlans()
+    console.log(data)
+    if (typeof data !== 'string') setPrices(data.plans)
+    else console.error(data)
+  }
+
   useEffect(() => {
-    setPrices([
-      {
-        _id: '1',
-        name: '50Gb',
-        type: 'one_time',
-        price: 9.99,
-        priceId: '',
-      },
-      {
-        _id: '2',
-        name: '100Gb',
-        type: 'one_time',
-        price: 18.99,
-        priceId: '',
-      },{
-        _id: '3',
-        name: '150Gb',
-        type: 'one_time',
-        price: 27.99,
-        priceId: ''
-      }])
+    getData()
   }, [])
 
   return (

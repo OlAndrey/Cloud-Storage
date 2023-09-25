@@ -14,4 +14,5 @@ export interface IUserInfo {
     diskSpace: number
     usedSpace: number
     avatarUrl: string
+    plan: string
 }
