@@ -1,5 +1,5 @@
-import { ReactNode } from 'react'
-import { NavLink } from 'react-router-dom'
+import { ReactNode, useEffect, useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import Icon from '../icon/Icon'
 
 interface SidenavItemProps {
@@ -10,7 +10,13 @@ interface SidenavItemProps {
 }
 
 const SideBarItem = ({ label, to, iconName, hideLabel }: SidenavItemProps): JSX.Element => {
-  const isActive = window.location.pathname.includes(to)
+  const location = useLocation()
+  const [isActive, setIsActive] = useState(location.pathname.includes(to))
+
+  useEffect(() => {
+    const includePath = location.pathname.includes(to)
+    if (isActive !== includePath) setIsActive(includePath)
+  }, [location])
 
   const content: ReactNode = (
     <div className='flex h-10 w-full items-center justify-between'>

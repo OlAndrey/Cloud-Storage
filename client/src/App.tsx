@@ -12,6 +12,8 @@ import Recent from './components/recent/Recent'
 import SearchResultPage from './components/search/SearchResultPage'
 import Preferences from './components/preferences/Preferences'
 import SideBar from './components/menu/SideBar'
+import Success from './components/success/Success'
+import Cancel from './components/cancel/Cancel'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -45,6 +47,8 @@ const App = () => {
           <Route path='/search/:q/:dir' element={<SearchResultPage />} />
           <Route path='/search/:q' element={<SearchResultPage />} />
           <Route path='/preferences' element={<Preferences />} />
+          <Route path='/cancel' element={<Cancel />} />
+          <Route path='/success' element={<Success />} />
           <Route path='/*' element={<Navigate to='/drive' replace={true} />} />
         </Routes>
       ) : (

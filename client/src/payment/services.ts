@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IUserInfo } from '../types/auth'
 import axios from '../utils/axios'
 
 export const handleCheckout = (planId: string) => {
@@ -11,4 +12,16 @@ export const handleCheckout = (planId: string) => {
     .catch((e) => {
       console.log(e.error)
     })
+}
+
+export const handlePaymentSuccess = async (): Promise<IUserInfo | string> => {
+  try {
+    const res = await axios.get('/api/v1/payment-success')
+
+    return res.data.user
+  } catch (error: any) {
+    console.error(error)
+    if (error.response && error.response.data.message) return error.response.data.message
+    return error.message
+  }
 }
