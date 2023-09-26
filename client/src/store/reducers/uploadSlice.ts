@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import axios from 'axios'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { IUploadFile, IUploadFileProcess } from '../../types/file'
-import axios from 'axios'
-import { addFile } from './fileSlice'
+import { addFile } from './driveSlice'
 
 interface UploadState {
   isVisible: boolean
@@ -11,8 +11,7 @@ interface UploadState {
 
 const initialState: UploadState = {
   isVisible: false,
-  files: [
-  ],
+  files: [],
 }
 
 export const uploadFile = createAsyncThunk(
@@ -84,8 +83,7 @@ const uploadSlice = createSlice({
       )
     },
   },
-  extraReducers: () => {
-  },
+  extraReducers: () => {},
 })
 
 export const { addUploadFile, changeUploadFile, hideUploader, removeUploadFile, showUploader } =

@@ -12,6 +12,23 @@ const Header = () => {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
+  const percent = userInfo
+    ? Math.round(
+        ((userInfo.diskSpace - (userInfo.diskSpace - userInfo.usedSpace)) / userInfo.diskSpace) *
+          100,
+      )
+    : 0
+
+  const wait = (time: number) => {
+    return (callback: () => void) => {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(true)
+        }, time)
+      }).then(() => callback())
+    }
+  }
+
   const mainMenu: ReactNode = (
     <div className='relative flex flex-grow items-center justify-end sm:justify-between px-3'>
       <div className='hidden sm:block grow'>
@@ -25,8 +42,9 @@ const Header = () => {
         <Icon name='GearIcon' size={[36, 36]} fill='none' />
       </Link>
 
-      <button onFocus={() => setIsModalOpen(true)} 
-      // onBlur={() => setIsModalOpen(false)}
+      <button
+        onFocus={() => setIsModalOpen(true)}
+        onBlur={wait(150).bind(undefined, () => setIsModalOpen(false))}
       >
         <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={36} />
       </button>
@@ -34,8 +52,7 @@ const Header = () => {
         className={`z-10 absolute top-10 right-2 py-2 ${
           isModalOpen ? 'block' : 'hidden'
         } w-34 bg-default rounded-lg border border-gray-10 p-1`}
-        onBlur={() => console.log('close')}
-        // onBlur={() => setIsModalOpen(false)}
+        onClick={() => setIsModalOpen(false)}
       >
         <div className='flex items-center p-3'>
           <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={36} />
@@ -46,11 +63,19 @@ const Header = () => {
             <h2 className='truncate text-sm text-gray-400'>{userInfo?.email}</h2>
           </div>
         </div>
+        <div className='py-2 px-4 flex justify-between items-center'>
+          <div className='text-xs text-gray-400'>{percent}% space used</div>
+          <button
+            className='text-sm text-blue-600 transition duration-150 ease-in-out hover:text-blue-700'
+            onClick={() => navigate('/preferences?tab=plans')}
+          >
+            Upgrade
+          </button>
+        </div>
         <ul className=' text-sm text-gray-400'>
           <li
             className='flex gap-2 items-center px-4 py-2 cursor-pointer hover:text-white hover:bg-blue-500 hover:bg-opacity-10'
             onClick={() => {
-              console.log('click')
               navigate('/preferences')
             }}
           >
