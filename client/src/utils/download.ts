@@ -1,10 +1,10 @@
-export async function downloadFile(idArr: string[]) {
+export async function downloadFile(idArr: string[], name ='') {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/file/download?idArr[]=${idArr.join('&idArr[]=')}`,
+      `${process.env.REACT_APP_API_URL}/api/file/download?idArr[]=${idArr.join('&idArr[]=')}`,
       {
         headers: {
-          Authorization: `${localStorage.getItem('userToken')}`,
+          Authorization: `${window.localStorage.getItem('userToken')}`,
         },
       },
     )
@@ -13,7 +13,7 @@ export async function downloadFile(idArr: string[]) {
       const downloadUrl = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = downloadUrl
-      link.download = 'download'
+      link.download = name ? name: 'download'
       document.body.appendChild(link)
       link.click()
       link.remove()

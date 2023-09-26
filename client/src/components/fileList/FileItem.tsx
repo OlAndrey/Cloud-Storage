@@ -85,7 +85,7 @@ const FileItem: FC<FileItemPropTypes> = ({
         ) : (
           <div
             onClick={() => {
-              if (file.status !== 'TRASHED') downloadFile([file._id])
+              if (file.status !== 'TRASHED') downloadFile([file._id], file.name)
             }}
           >
             {file.name}

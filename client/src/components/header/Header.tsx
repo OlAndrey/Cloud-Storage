@@ -46,7 +46,7 @@ const Header = () => {
         onFocus={() => setIsModalOpen(true)}
         onBlur={wait(150).bind(undefined, () => setIsModalOpen(false))}
       >
-        <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={36} />
+        <PictureAvatar src={`${process.env.REACT_APP_API_URL}/${userInfo?.avatarUrl}`} diameter={36} />
       </button>
       <div
         className={`z-10 absolute top-10 right-2 py-2 ${
@@ -55,7 +55,7 @@ const Header = () => {
         onClick={() => setIsModalOpen(false)}
       >
         <div className='flex items-center p-3'>
-          <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={36} />
+          <PictureAvatar src={`${process.env.REACT_APP_API_URL}/${userInfo?.avatarUrl}`} diameter={36} />
           <div className='ml-2 min-w-0'>
             <h1 className='truncate font-medium' style={{ lineHeight: 1 }}>
               {userInfo?.name}
@@ -100,9 +100,9 @@ const Header = () => {
         userInfo ? 'border-b border-gray-5' : ''
       }`}
     >
-      <div className='pl-8 w-16 sm:w-48 lg:w-64'>
-        <Link to='#' className='block w-full cursor-pointer'>
-          Logo
+      <div className='pl-8 w-48 lg:w-64'>
+        <Link to='/' className='block w-full text-xl font-bold cursor-pointer transition duration-200 ease-in-out hover:text-blue-500'>
+          Cloud Storage
         </Link>
       </div>
 

@@ -21,7 +21,6 @@ const Usage = () => {
           <div className='rounded-lg border-2 p-2 font-medium border-blue-500 text-blue-500'>
             {sizeFormat(userInfo?.diskSpace as number)}
           </div>
-          <div className='pl-2 grow'>Free plan</div>
           <button
             className='p-2 rounded-lg bg-blue-700 transition duration-150 ease-in-out hover:bg-blue-800'
             onClick={() => navigate('?tab=plans')}

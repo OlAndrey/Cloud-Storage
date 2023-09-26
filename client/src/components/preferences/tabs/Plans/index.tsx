@@ -15,7 +15,6 @@ const PlansTab = ({ className }: { className: string }) => {
 
   const getData = async () => {
     const data = await getPlans()
-    console.log(data)
     if (typeof data !== 'string') setPrices(data.plans)
     else console.error(data)
   }
@@ -35,14 +34,17 @@ const PlansTab = ({ className }: { className: string }) => {
                 item.title === interval ? 'bg-zinc-900 text-gray-100 shadow-sm' : 'text-gray-50'
               } rounded-lg py-1.5 px-6 font-medium`}
               onClick={() => setInterval(item.title)}
-              disabled={item.title !== interval}
             >
               {item.text}
             </button>
           ))}
         </div>
       </div>
-      <PlanSelector prices={prices} />
+      <PlanSelector
+        prices={prices.filter((price) =>
+          interval === 'lifetime' ? price.type === 'one_time' : price.type === 'subscription',
+        )}
+      />
       <Features />
     </div>
   )

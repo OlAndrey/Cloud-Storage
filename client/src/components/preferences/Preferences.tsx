@@ -47,7 +47,7 @@ const Preferences = () => {
 
   return (
     <Container error='' loading={false}>
-      <div className='flex h-full w-full flex-col'>
+      <div className='flex h-full w-full flex-col pr-2'>
         <TabSelector tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
         <div className='flex flex-grow flex-row justify-center w-full overflow-y-auto p-2 md:p-8'>
           <div className='w-full overflow-x-visible'>

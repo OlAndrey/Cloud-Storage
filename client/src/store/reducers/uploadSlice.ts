@@ -36,9 +36,9 @@ export const uploadFile = createAsyncThunk(
       dispatch(showUploader())
       dispatch(addUploadFile(uploadFile))
 
-      const res = await axios.post('http://localhost:5000/api/file/upload', formData, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/api/file/upload`, formData, {
         headers: {
-          Authorization: window.localStorage.getItem('userInfo'),
+          Authorization: `${window.localStorage.getItem('userToken')}`,
           'Content-Type': 'multipart/form-data',
         },
         cancelToken: source.token,

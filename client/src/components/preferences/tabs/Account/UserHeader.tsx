@@ -22,7 +22,7 @@ const UserHeader = () => {
         className='absolute top-0 inset-x-1/2 -ml-14 w-28 cursor-pointer'
         onClick={() => setIsModalOpen(true)}
       >
-        <PictureAvatar src={`http://localhost:5000/${userInfo?.avatarUrl}`} diameter={110} />
+        <PictureAvatar src={`${process.env.REACT_APP_API_URL}/${userInfo?.avatarUrl}`} diameter={110} />
       </div>
 
       <div
