@@ -5,6 +5,6 @@ const { checkPaid, getStripeSession } = require('../containers/stripeContainer')
 const route = express.Router()
 
 route.post('/create-subscription-checkout-session', checkAuth, getStripeSession)
-route.post('/payment-success', checkAuth, checkPaid)
+route.get('/payment-success', checkAuth, checkPaid)
 
 module.exports = route

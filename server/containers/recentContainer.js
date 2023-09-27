@@ -19,7 +19,11 @@ const updateOpeningDate = async (userId, currentDirId) => {
 
 const getUserDate = async (userId) => {
   const { _id, name, avatarUrl } = await User.findOne({ _id: userId })
-  return { id: _id, name, avatar: avatarUrl ? avatarUrl : '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg' }
+  return {
+    id: _id,
+    name,
+    avatar: avatarUrl ? avatarUrl : '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg'
+  }
 }
 
 const getFilesWithOpeningDate = async (userId) => {
@@ -45,8 +49,12 @@ const getFilesWithOpeningDate = async (userId) => {
       })
   }
   await recent.save()
-
-  return filesWithOpeningDate
+console.log(filesWithOpeningDate)
+  return filesWithOpeningDate.sort((x, y) => {
+    x = new Date(x.newlyOpened)
+    y = new Date(y.newlyOpened)
+    return  y - x
+  })
 }
 
 const getRecentFiles = async (req, res) => {

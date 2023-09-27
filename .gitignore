@@ -8,6 +8,8 @@ node_modules
 
 # production
 build
+static
+files
 
 # misc
 .DS_Store

@@ -1,7 +1,6 @@
 const fs = require('fs')
 const fsExtra = require('fs-extra')
 const path = require('path')
-const File = require('../models/File')
 const archiver = require('archiver')
 
 class FileServices {

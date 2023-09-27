@@ -3,7 +3,6 @@ const path = require('path')
 const fileServices = require('../services/FileServices')
 const File = require('../models/File')
 const User = require('../models/User')
-const Recent = require('../models/Recent')
 const { updateOpeningDate } = require('./recentContainer')
 
 const createDir = async (req, res) => {
@@ -100,7 +99,7 @@ const downloadFile = async (req, res) => {
       await fileServices.zipFiles(filesPath, archivePath)
       return res.download(archivePath, 'download.zip')
     } else {
-      const file = await File.findOne({ _id: req.query.id })
+      const file = await File.findOne({ _id: idArr })
       if (!file) {
         return res.status(400).json({ message: 'File not found' })
       }

@@ -14,7 +14,7 @@ const app = express()
 dotenv.config()
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:5500']
+    origin: [process.env.FRONT_END_HOST]
   })
 )
 app.use(fileUpload())
@@ -23,7 +23,7 @@ app.use(express.static('static'))
 
 app.get('/api/plan', async (req, res) => {
   try {
-    const plans = await Plan.find({})
+    const plans = await Plan.find({ price:{ $gt: 0 } })
 
     res.status(200).json({ plans })
   } catch (error) {

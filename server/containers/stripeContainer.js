@@ -52,6 +52,7 @@ const checkPaid = async (req, res) => {
 
         user.diskSpace = plan.value.diskSpace
         user.plan = plan._id
+        user.session = ''
         await user.save()
 
         res.status(200).json({
@@ -66,13 +67,13 @@ const checkPaid = async (req, res) => {
           }
         })
       } catch (error) {
-        return res.json({ message: 'Something went wrong!' })
+        return res.status(500).json({ message: 'Something went wrong!' })
       }
     } else {
-      return res.json({ message: 'Payment failed' })
+      return res.status(500).json({ message: 'Payment failed' })
     }
   } catch (error) {
-    res.status(500).send(error)
+    res.status(500).json({ message: 'Payment failed' })
   }
 }
 
