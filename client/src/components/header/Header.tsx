@@ -46,7 +46,7 @@ const Header = () => {
         onFocus={() => setIsModalOpen(true)}
         onBlur={wait(150).bind(undefined, () => setIsModalOpen(false))}
       >
-        <PictureAvatar src={`${process.env.REACT_APP_API_URL}/${userInfo?.avatarUrl}`} diameter={36} />
+        <PictureAvatar src={userInfo?.avatarUrl || ''} diameter={36} />
       </button>
       <div
         className={`z-10 absolute top-10 right-2 py-2 ${
@@ -55,7 +55,7 @@ const Header = () => {
         onClick={() => setIsModalOpen(false)}
       >
         <div className='flex items-center p-3'>
-          <PictureAvatar src={`${process.env.REACT_APP_API_URL}/${userInfo?.avatarUrl}`} diameter={36} />
+          <PictureAvatar src={userInfo?.avatarUrl || ''} diameter={36} />
           <div className='ml-2 min-w-0'>
             <h1 className='truncate font-medium' style={{ lineHeight: 1 }}>
               {userInfo?.name}
