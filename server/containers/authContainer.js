@@ -1,13 +1,11 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const fs = require('fs')
-const path = require('path')
-const Uuid = require('uuid')
 const User = require('../models/User')
 const File = require('../models/File')
-const fileServices = require('../services/FileServices')
+const fileServices = require('../services/fileServices')
 const Recent = require('../models/Recent')
 const { handlerDeleteFile } = require('./basketContainer')
+const { uploader } = require('../utils/cloudinaryConfig')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -187,14 +185,18 @@ const uploadAvatar = async (req, res) => {
   try {
     const file = req.files.file
     const user = await User.findById(req.userId)
-    const avatarName = Uuid.v4() + file.mimetype.replace('image/', '.')
 
-    const pathAvatar = path.join(__dirname, '../', 'static', user.avatarUrl)
-    if (fs.existsSync(pathAvatar) && !(pathAvatar !== process.env.DEFAULT_AVATAR_URL))
-      fs.unlinkSync(pathAvatar)
+    const result = await new Promise((resolve, reject) => {
+      uploader
+        .upload_stream((error, uploadResult) => {
+          if(error) reject(error)
+          return resolve(uploadResult)
+        })
+        .end(file.data)
+    })
 
-    file.mv(path.join(__dirname, '../', 'static', avatarName))
-    user.avatarUrl = avatarName
+    const imgUrl = result.url
+    user.avatarUrl = imgUrl
     await user.save()
 
     return res.status(200).json({

@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     },
     avatarUrl: {
       type: String,
-      default: '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg'
+      default: 'https://res.cloudinary.com/dtpqmlah5/image/upload/v1703944135/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8_i1zqqo.jpg'
     },
     email: {
       type: String,

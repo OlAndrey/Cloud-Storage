@@ -4,14 +4,16 @@ const dotenv = require('dotenv')
 const cors = require('cors')
 const http = require('http')
 const fileUpload = require('express-fileupload')
+dotenv.config()
+
 const authRoute = require('./routes/auth')
 const fileRoute = require('./routes/file')
 const recentRoute = require('./routes/recent')
 const paymentRoute = require('./routes/payment')
 const Plan = require('./models/Plan')
+const { cloudinaryConfig } = require('./utils/cloudinaryConfig')
 
 const app = express()
-dotenv.config()
 app.use(
   cors({
     origin: [process.env.FRONT_END_HOST]
@@ -19,7 +21,7 @@ app.use(
 )
 app.use(fileUpload())
 app.use(express.json())
-app.use(express.static('static'))
+app.use('*', cloudinaryConfig)
 
 app.get('/api/plan', async (req, res) => {
   try {
