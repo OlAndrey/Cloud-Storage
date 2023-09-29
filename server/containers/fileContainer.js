@@ -1,6 +1,7 @@
-const fs = require('fs')
-const path = require('path')
-const fileServices = require('../services/FileServices')
+// const fs = require('fs')
+const fs = require('@cyclic.sh/s3fs')
+const path = require('path/posix')
+const fileServices = require('../services/fileServices')
 const File = require('../models/File')
 const User = require('../models/User')
 const { updateOpeningDate } = require('./recentContainer')
@@ -52,16 +53,16 @@ const uploadFile = async (req, res) => {
     let filePath, pathToFile
     if (!currentDir) {
       pathToFile = file.name
-      filePath = path.join(__dirname, '../', 'files', req.userId, file.name)
+      filePath = path.join('files', req.userId, file.name)
     } else {
-      pathToFile = path.join(currentDir.path, file.name)
-      filePath = path.join(__dirname, '../', 'files', req.userId, currentDir.path, file.name)
+      pathToFile = currentDir.path + '/' + file.name
+      filePath = path.join('files', req.userId, currentDir.path, file.name)
     }
 
     if (fs.existsSync(filePath)) return res.status(400).json({ message: 'File already exist!' })
 
     user.usedSpace += file.size
-    file.mv(filePath)
+    await fileServices.uploadFile(filePath, file.data)
 
     const dbFile = new File({
       name: file.name,
@@ -86,34 +87,44 @@ const uploadFile = async (req, res) => {
   }
 }
 
+const setHeaderForDownload = (req, res) => {
+  res.setHeader('Content-Description', 'File Transfer')
+  res.setHeader('Content-Disposition', `attachment; filename=${req.filename}`)
+  res.setHeader('Content-Type', 'application/octet-stream')
+}
+
 const downloadFile = async (req, res) => {
   try {
     const { idArr } = req.query
+    req.filename = 'download.zip'
     if (idArr.length > 1) {
       const files = await Promise.all(idArr.map((id) => File.findOne({ _id: id })))
-      const filesPath = files.map((file) =>
-        path.join(__dirname, '../', 'files', file.user.toString(), file.path)
-      )
+      const filesPath = files.map((file) => path.join('files', file.user.toString(), file.path))
 
-      const archivePath = path.join(__dirname, '../', 'files', req.userId, 'download.zip')
-      await fileServices.zipFiles(filesPath, archivePath)
-      return res.download(archivePath, 'download.zip')
+      // const archivePath = path.join('files', req.userId, 'download.zip')
+      const file = await fileServices.zipFiles(filesPath)
+      setHeaderForDownload(req, res)
+      return res.status(200).end(file)
     } else {
       const file = await File.findOne({ _id: idArr })
       if (!file) {
         return res.status(400).json({ message: 'File not found' })
       }
-      const filePath = path.join(__dirname, '../', 'files', file.user.toString(), file.path)
-      if (fs.existsSync(filePath)) {
-        if (file.type === 'dir') {
-          const archivePath = path.join(__dirname, '../', 'files', req.userId, 'download.zip')
-          await fileServices.zipFiles(filePath, archivePath)
-          return res.download(archivePath, 'download.zip')
-        }
-        return res.download(filePath, file.name)
+      const filePath = path.join('files', file.user.toString(), file.path)
+
+      if (file.type === 'dir') {
+        // const archivePath = path.join('files', req.userId, 'download.zip')
+        // await fileServices.zipFiles(filePath, archivePath)
+        const file = await fileServices.zipFiles([filePath])
+        setHeaderForDownload(req, res)
+        return res.status(200).end(file)
+      } else {
+        req.filename = file.name
+        setHeaderForDownload(req, res)
+        const file1 = fs.readFileSync(filePath)
+        return res.status(200).end(file1)
       }
     }
-    return res.status(400).json({ message: 'Download error' })
   } catch (e) {
     console.log(e)
     res.status(500).json({ message: 'Download error' })
@@ -174,25 +185,26 @@ const editNameFile = async (req, res) => {
 
     if (name.trim()) {
       file.name = name
-      await fileServices.editFile(file)
+      // await fileServices.editFile(file)
 
       file.updatedAt = new Date().toISOString()
 
-      const renameFile = async (file, newNameDir) => {
-        if (!file) return undefined
-        const oldPath = file.path.split(path.sep)
-        file.path = [].concat(newNameDir, oldPath.slice(newNameDir.length)).join(path.sep)
-        await file.save()
-        if (!file.child || !file.child.length) {
-          return
-        }
-        const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
-        return await Promise.all(childFile.map((a) => renameFile(a, file.path.split(path.sep))))
-      }
+      // const renameFile = async (file, newNameDir) => {
+      //   if (!file) return undefined
+      //   const oldPath = file.path.split(path.sep)
+      //   file.path = [].concat(newNameDir, oldPath.slice(newNameDir.length)).join(path.sep)
+      //   await file.save()
+      //   if (!file.child || !file.child.length) {
+      //     return
+      //   }
+      //   const childFile = await Promise.all(file.child.map((id) => File.findOne({ _id: id })))
+      //   return await Promise.all(childFile.map((a) => renameFile(a, file.path.split(path.sep))))
+      // }
 
-      const newPath = file.path.substr(0, file.path.lastIndexOf(path.sep) + 1) + name
-      await renameFile(file, newPath.split(path.sep))
+      // const newPath = file.path.substr(0, file.path.lastIndexOf(path.sep) + 1) + name
+      // await renameFile(file, newPath.split(path.sep))
 
+      await file.save()
       return res.status(200).json({ file })
     }
 
