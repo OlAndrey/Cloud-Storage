@@ -49,7 +49,7 @@ const getFilesWithOpeningDate = async (userId) => {
       })
   }
   await recent.save()
-console.log(filesWithOpeningDate)
+
   return filesWithOpeningDate.sort((x, y) => {
     x = new Date(x.newlyOpened)
     y = new Date(y.newlyOpened)
