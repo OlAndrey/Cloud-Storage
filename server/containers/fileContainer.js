@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const fileServices = require('../services/FileServices')
+const fileServices = require('../services/fileServices')
 const File = require('../models/File')
 const User = require('../models/User')
 const { updateOpeningDate } = require('./recentContainer')

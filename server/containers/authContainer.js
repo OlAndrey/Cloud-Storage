@@ -5,7 +5,7 @@ const path = require('path')
 const Uuid = require('uuid')
 const User = require('../models/User')
 const File = require('../models/File')
-const fileServices = require('../services/FileServices')
+const fileServices = require('../services/fileServices')
 const Recent = require('../models/Recent')
 const { handlerDeleteFile } = require('./basketContainer')
 

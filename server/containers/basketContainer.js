@@ -1,6 +1,6 @@
 const File = require('../models/File')
 const User = require('../models/User')
-const FileServices = require('../services/FileServices')
+const fileServices = require('../services/fileServices')
 
 const getFilesFromBasket = async (req, res) => {
   try {
@@ -39,7 +39,7 @@ const restoreFile = async (req, res) => {
       let parentDir = await File.findOne({ _id: file.parent })
       while (parentDir) {
         if (parentDir.status !== 'EXISTS') {
-          await FileServices.moveFile(file)
+          await fileServices.moveFile(file)
           file.parent = undefined
           file.path = file.name
           parentDir.child = parentDir.child.filter((id) => id !== file._id)
@@ -69,7 +69,7 @@ const handlerDeleteFile = (id, userId) => {
 
       const user = await User.findOne({ _id: userId })
 
-      FileServices.deleteFile(file)
+      fileServices.deleteFile(file)
       await file.deleteOne()
 
       if (file.child.length) {
