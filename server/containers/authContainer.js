@@ -1,13 +1,12 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const fs = require('fs')
 const path = require('path')
 const Uuid = require('uuid')
 const User = require('../models/User')
 const File = require('../models/File')
 const fileServices = require('../services/fileServices')
+const userServices = require('../services/userServices')
 const Recent = require('../models/Recent')
-const { handlerDeleteFile } = require('./basketContainer')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -42,13 +41,7 @@ const register = async (req, res) => {
       try {
         const user = await newUser.save()
 
-        const token = jwt.sign(
-          {
-            id: user._id
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: '1d' }
-        )
+        const token = userServices.getToken(user._id)
 
         res.status(200).json({
           token,
@@ -85,13 +78,7 @@ const login = async (req, res) => {
       })
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    const token = userServices.getToken(user._id)
     res.status(200).json({
       token,
       user: normalizeUserData(user)
@@ -111,13 +98,7 @@ const getMe = async (req, res) => {
       })
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    const token = userServices.getToken(user._id)
     res.status(200).json({
       token,
       user: normalizeUserData(user)
@@ -165,24 +146,6 @@ const editPassword = async (req, res) => {
   }
 }
 
-const deleteAccount = async (req, res) => {
-  try {
-    const user = await User.findOne({ _id: req.userId })
-
-    const files = await File.find({ user: req.userId })
-
-    if (files.length) {
-      await Promise.all(files.map((file) => handlerDeleteFile(file._id, file.user)))
-    }
-
-    await user.deleteOne()
-    return res.status(200).json({ message: 'Success' })
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
 const uploadAvatar = async (req, res) => {
   try {
     const file = req.files.file
@@ -205,5 +168,11 @@ const uploadAvatar = async (req, res) => {
     return res.status(500).json({ message: 'Upload avatar error' })
   }
 }
+
+const deleteAccount = async (req, res) =>
+  userServices
+    .deleteUser(req.userId)
+    .then((obj) => res.status(200).json(obj))
+    .catch((err) => res.status(500).json(err))
 
 module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }
