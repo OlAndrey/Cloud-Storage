@@ -1,9 +1,35 @@
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Uuid = require('uuid')
 const User = require('../models/User')
 const File = require('../models/File')
+const Recent = require('../models/Recent')
+const fileServices = require('./fileServices')
 const { handlerDeleteFile } = require('../containers/basketContainer')
 
 class UserServices {
+  registration(body) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { name, email, password } = body
+
+        const salt = 5
+        const hash = await bcrypt.hash(password, salt)
+        const newUser = new User({ name, email, password: hash })
+
+        const file = new File({ user: newUser._id, name: '' })
+        await fileServices.createDir(file)
+        const recent = new Recent({ user: newUser._id })
+
+        await recent.save()
+        await newUser.save()
+        resolve({ message: 'Success' })
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   deleteUser(userId) {
     return new Promise(async (resolve, reject) => {
       try {

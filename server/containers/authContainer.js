@@ -3,10 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const Uuid = require('uuid')
 const User = require('../models/User')
-const File = require('../models/File')
-const fileServices = require('../services/fileServices')
 const userServices = require('../services/userServices')
-const Recent = require('../models/Recent')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -26,35 +23,19 @@ const normalizeUserData = (user) => ({
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body
-
-    const salt = 5
-    const hash = await bcrypt.hash(password, salt)
-    const newUser = new User({ name, email, password: hash })
+    const { email } = req.body
 
     try {
-      const file = new File({ user: newUser._id, name: '' })
-      await fileServices.createDir(file)
-      const recent = new Recent({ user: newUser._id })
-      await recent.save()
+      const user = await User.findOne({ email })
 
-      try {
-        const user = await newUser.save()
-
-        const token = userServices.getToken(user._id)
-
-        res.status(200).json({
-          token,
-          user: normalizeUserData(user)
-        })
-      } catch (e) {
-        res.status(406).json({
-          error: e,
-          message: 'The email address is already in use by another account'
-        })
-      }
-    } catch (error) {
-      res.status(500).json(error)
+      return res.status(406).json({
+        message: 'The email address is already in use by another account'
+      })
+    } catch (e) {
+      userServices
+        .registration(req.body)
+        .then((obj) => res.status(200).json(obj))
+        .catch((err) => res.status(500).json(err))
     }
   } catch (e) {
     console.log(e)
