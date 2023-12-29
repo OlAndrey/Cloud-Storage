@@ -5,6 +5,7 @@ const User = require('../models/User')
 const File = require('../models/File')
 const Recent = require('../models/Recent')
 const fileServices = require('./fileServices')
+const mailServices = require('./mailServices')
 const { handlerDeleteFile } = require('../containers/basketContainer')
 
 class UserServices {
@@ -15,12 +16,14 @@ class UserServices {
 
         const salt = 5
         const hash = await bcrypt.hash(password, salt)
-        const newUser = new User({ name, email, password: hash })
+        const uniqueStr = Uuid.v4()
+        const newUser = new User({ name, email, password: hash, activationLink: uniqueStr })
 
         const file = new File({ user: newUser._id, name: '' })
         await fileServices.createDir(file)
         const recent = new Recent({ user: newUser._id })
 
+        await mailServices.sendActivationMail(email, uniqueStr, name)
         await recent.save()
         await newUser.save()
         resolve({ message: 'Success' })

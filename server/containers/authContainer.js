@@ -28,9 +28,19 @@ const register = async (req, res) => {
     try {
       const user = await User.findOne({ email })
 
-      return res.status(406).json({
-        message: 'The email address is already in use by another account'
-      })
+      if (user.isActivated) {
+        return res.status(406).json({
+          message: 'The email address is already in use by another account'
+        })
+      } else {
+        const uniqueStr = Uuid.v4()
+        user.activationLink = uniqueStr
+
+        await user.save()
+        return res.status(200).json({
+          message: 'Success'
+        })
+      }
     } catch (e) {
       userServices
         .registration(req.body)

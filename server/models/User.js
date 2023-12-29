@@ -6,10 +6,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    avatarUrl: {
-      type: String,
-      default: '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg'
-    },
     email: {
       type: String,
       required: true,
@@ -18,6 +14,18 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true
+    },
+    isActivated: { 
+      type: Boolean,
+      default: false
+    },
+    activationLink: { 
+      type: String,
+      default: ''
+    },
+    avatarUrl: {
+      type: String,
+      default: '8aa89b76-3f1e-4417-83ee-ddcd1944a3ce.jpeg'
     },
     diskSpace: {
       type: Number,
