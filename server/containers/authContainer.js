@@ -53,6 +53,26 @@ const register = async (req, res) => {
   }
 }
 
+const activate = async (req, res) => {
+  try {
+    const activationLink = req.params.link
+    const user = await User.findOne({ activationLink })
+    if (Date.now() - Date.parse(user.updatedAt) < 1000 * 60 * 60 * 24) {
+      user.activationLink = ''
+      user.isActivated = true
+      await user.save()
+      return res.redirect(process.env.FRONT_END_HOST)
+    }
+
+    user.activationLink = ''
+    await user.save()
+    return res.send("<h1>The link has expired! Please register again.</h1>")
+  } catch (e) {
+    console.log(e)
+    res.send("<h1>The link is invalid!</h1>")
+  }
+}
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body
@@ -166,4 +186,4 @@ const deleteAccount = async (req, res) =>
     .then((obj) => res.status(200).json(obj))
     .catch((err) => res.status(500).json(err))
 
-module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }
+module.exports = { register, activate, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }

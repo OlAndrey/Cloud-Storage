@@ -9,6 +9,7 @@ const fileRoute = require('./routes/file')
 const recentRoute = require('./routes/recent')
 const paymentRoute = require('./routes/payment')
 const Plan = require('./models/Plan')
+const { activate } = require('./containers/authContainer')
 
 const app = express()
 dotenv.config()
@@ -36,6 +37,7 @@ app.use('/api/auth', authRoute)
 app.use('/api/file', fileRoute)
 app.use('/api/recent', recentRoute)
 app.use('/api/v1', paymentRoute)
+app.get('/active/:link', activate)
 
 const port = process.env.PORT || 5001
 const server = http.createServer(app)
