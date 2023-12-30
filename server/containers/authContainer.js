@@ -82,6 +82,12 @@ const login = async (req, res) => {
       return res.status(406).json({ message: 'Email or password is incorrect!!!' })
     }
 
+    if (!user.isActivated) {
+      return res.status(406).json({
+        message: 'Account is not activated!!!'
+      })
+    }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password)
     if (!isPasswordCorrect) {
       return res.status(406).json({
