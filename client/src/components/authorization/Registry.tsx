@@ -7,6 +7,7 @@ import { IFormValues } from '../../types/form'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import Icon from '../icon/Icon'
 import { registerUser, resetError } from '../../store/reducers/authSlice'
+import Container from './AuthContainer'
 
 const Registry = () => {
   const { loading, userToken, error } = useAppSelector((state) => state.auth)
@@ -35,10 +36,7 @@ const Registry = () => {
   }
 
   return (
-    <div className='h-screen container mx-auto px-4'>
-      <div className='flex min-h-full flex-col justify-center items-center'>
-        <div className='w-full sm:mx-auto sm:max-w-lg bg-zinc-900 rounded-2xl p-6 sm:px-11 sm:py-14'>
-          <h2 className='text-center text-2xl font-bold leading-9 tracking-tight'>Registaration</h2>
+    <Container title='Registration'>
 
           <div className='mt-10'>
             <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
@@ -126,9 +124,7 @@ const Registry = () => {
               </Link>
             </p>
           </div>
-        </div>
-      </div>
-    </div>
+        </Container>
   )
 }
 
