@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Modal from '../../../modal/Modal'
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux'
-import { deleteUser } from '../../../../store/reducers/authSlice'
+import { deleteUser } from '../../../../store/actions/authActions'
 
 const DeleteAccount = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)

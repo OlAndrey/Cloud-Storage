@@ -15,6 +15,7 @@ interface AuthState {
   authCheck: boolean
   userInfo: IUserInfo | null
   userToken: string
+  info: string
   error: string
 }
 
@@ -23,6 +24,7 @@ const initialState: AuthState = {
   authCheck: false,
   userInfo: null,
   userToken: '',
+  info: '',
   error: '',
 }
 
@@ -52,11 +54,9 @@ const authSlice = createSlice({
         state.loading = true
         state.error = ''
       })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        const { user, token } = action.payload
+      .addCase(registerUser.fulfilled, (state) => {
         state.loading = false
-        state.userInfo = user
-        state.userToken = token
+        state.info = 'Your account has been created, please activate it'
       })
       .addCase(registerUser.rejected, (state, action) => {
         const errorMsg = action.payload ? action.payload : ''
@@ -67,6 +67,7 @@ const authSlice = createSlice({
     builder
       .addCase(loginUser.pending, (state) => {
         state.loading = true
+        state.info = ''
         state.error = ''
       })
       .addCase(loginUser.fulfilled, (state, action) => {
@@ -98,6 +99,7 @@ const authSlice = createSlice({
     builder
       .addCase(editName.pending, (state) => {
         state.loading = true
+        state.info = ''
         state.error = ''
       })
       .addCase(editName.fulfilled, (state, action) => {

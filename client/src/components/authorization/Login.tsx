@@ -11,7 +11,7 @@ import { loginUser } from '../../store/actions/authActions'
 import Container from './AuthContainer'
 
 const Login = () => {
-  const { loading, userToken, error } = useAppSelector((state) => state.auth)
+  const { loading, info, error } = useAppSelector((state) => state.auth)
   const dispatch = useAppDispatch()
 
   const {
@@ -25,10 +25,6 @@ const Login = () => {
   useEffect(() => {
     if (error) dispatch(resetError())
   }, [])
-
-  useEffect(() => {
-    if (userToken) console.log('Successfully')
-  }, [userToken])
 
   const onSubmit: SubmitHandler<IFormValues> = async (formData, e) => {
     e?.preventDefault()
@@ -62,18 +58,10 @@ const Login = () => {
           </div>
 
           <div>
-            <div className='flex items-center justify-between'>
+            <div>
               <label htmlFor='password' className='block text-sm font-medium leading-6'>
                 Password
               </label>
-              <div className='text-sm'>
-                <Link
-                  to='/recovery-link'
-                  className='font-semibold text-indigo-600 hover:text-indigo-500'
-                >
-                  Forgot password?
-                </Link>
-              </div>
             </div>
             <div className='mt-2'>
               <PasswordInput
@@ -93,6 +81,15 @@ const Login = () => {
                 <Icon name='WarningIcon' fill='#EA580C' size={[20, 20]} className='mr-1' />
               </div>
               <span className='font-base w-56 text-sm text-orange-600'>{error}</span>
+            </div>
+          )}
+
+          {info && (
+            <div className='flex flex-row items-start pt-1'>
+              <div className='flex h-5 flex-row items-center'>
+                <Icon name='SuccessIcon' fill='#16A34A' size={[20, 20]} className='mr-1' />
+              </div>
+              <span className='font-base w-56 text-sm text-green-600'>{info}</span>
             </div>
           )}
 
