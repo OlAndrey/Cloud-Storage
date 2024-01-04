@@ -6,7 +6,8 @@ import PasswordInput from '../inputs/PasswordInput'
 import { IFormValues } from '../../types/form'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import Icon from '../icon/Icon'
-import { registerUser, resetError } from '../../store/reducers/authSlice'
+import { resetError } from '../../store/reducers/authSlice'
+import { registerUser } from '../../store/actions/authActions'
 import Container from './AuthContainer'
 
 const Registry = () => {
