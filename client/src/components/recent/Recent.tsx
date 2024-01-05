@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getRecentFiles, getSharedFiles } from '../../store/reducers/filesSlice'
+import { getRecentFiles, getSharedFiles } from '../../store/actions/filesActions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileListTitle from '../fileList/FileListTitleWithAuthorData'
 import FileItem from '../fileList/FileItemWithAuthorData'
