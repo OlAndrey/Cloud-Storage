@@ -116,6 +116,7 @@ const getMe = async (req, res) => {
     }
 
     const token = userServices.getToken(user._id)
+
     res.status(200).json({
       token,
       user: normalizeUserData(user)
@@ -163,6 +164,16 @@ const editPassword = async (req, res) => {
   }
 }
 
+const resetPassword = async (req, res) => {
+  try {
+    const response = userServices.recovery(req.body)
+
+    return res.status(200).json({ response })
+  } catch (e) {
+    error(req, res)
+  }
+}
+
 const uploadAvatar = async (req, res) => {
   try {
     const file = req.files.file
@@ -192,4 +203,15 @@ const deleteAccount = async (req, res) =>
     .then((obj) => res.status(200).json(obj))
     .catch((err) => res.status(500).json(err))
 
-module.exports = { register, activate, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }
+module.exports = {
+  register,
+  activate,
+  login,
+  getMe,
+  editUserName,
+  editPassword,
+  resetPassword,
+  recoveryPassword,
+  deleteAccount,
+  uploadAvatar
+}

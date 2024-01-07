@@ -38,6 +38,28 @@ class MailService {
                 
         })
     }
+
+    async sendResetPasswordMail(to, link, name) {
+        const inner = `
+            <div style="padding: 32px 0px 24px 0px; ">
+                <p>Hi ${name},</p>
+                <p style="padding: 12px 0 24px 0;">Someone (probably you) requested to reset the password to your <a href="https://cloud-storage-seven.vercel.app/" target="_blank" style=" text-decoration: none; color: #0066FF">Cloud-Storage.App</a> account.<br />
+                    If you didn't submit this request, ignore this email, and your password will not be changed.</p>
+                <a style="background: #0066FF; padding: 10px 32px; border-radius: 50px; color: #ffffff;  text-decoration: none;"
+                    href="${process.env.FRONT_END_HOST + '/reset/' + link}">Reset password</a>
+                <p style="padding-top: 32px; margin: 0;">Sincerely, Developer Andrey Oleynik</p>
+            </div>
+        `
+        
+        await this.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to,
+            subject: 'Reset password on Cloud Storage',
+            text: '',
+            html: getTemplate(inner)
+                
+        })
+    }
 }
 
 function getTemplate(inner) {

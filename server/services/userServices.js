@@ -33,6 +33,20 @@ class UserServices {
     })
   }
 
+  recovery(body) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { email } = body
+        const user = await User.findOne({ email })
+
+        await mailServices.sendResetPasswordMail(email, user._id, user.name)
+        resolve({ message: 'Success' })
+      } catch (error) {
+        reject(error)
+      }
+    })
+  }
+
   deleteUser(userId) {
     return new Promise(async (resolve, reject) => {
       try {
