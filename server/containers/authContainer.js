@@ -174,6 +174,26 @@ const resetPassword = async (req, res) => {
   }
 }
 
+const recoveryPassword = async (req, res) => {
+  try {
+    const { password } = req.body
+    const user = await User.findById(req.params.userId)
+
+    const salt = 5
+    const hash = await bcrypt.hash(password, salt)
+    user.password = hash
+    await user.save()
+
+    const token = userServices.getToken(user._id)
+    res.status(200).json({
+      token,
+      user: normalizeUserData(user)
+    })
+  } catch (e) {
+    error(req, res)
+  }
+}
+
 const uploadAvatar = async (req, res) => {
   try {
     const file = req.files.file
