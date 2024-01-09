@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from './hooks/redux'
-import { authCheckThunk, authChecked } from './store/reducers/authSlice'
+import { authCheckThunk } from './store/actions/authActions'
+import { authChecked } from './store/reducers/authSlice'
 import Login from './components/authorization/Login'
 import Registry from './components/authorization/Registry'
 import Main from './components/drive/Main'
@@ -14,6 +15,7 @@ import Preferences from './components/preferences/Preferences'
 import SideBar from './components/menu/SideBar'
 import Success from './components/success/Success'
 import Cancel from './components/cancel/Cancel'
+import RecoveryLink from './components/authorization/RecoveryLink'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -32,7 +34,7 @@ const App = () => {
       <Header />
       {userInfo ? <SideBar /> : ''}
       {!authCheck ? (
-        <div className='h-full flex items-center'>
+        <div className='h-screen flex items-center'>
           <div className='w-screen flex justify-center items-center'>
             <Icon className='animate-spin mr-3' size={[64, 64]} fill='#ffffff' name='SpinnerIcon' />
           </div>
@@ -55,6 +57,7 @@ const App = () => {
         <Routes>
           <Route path='/login' element={<Login />} />
           <Route path='/registration' element={<Registry />} />
+          <Route path='/recovery-link' element={<RecoveryLink />} />
           <Route path='/*' element={<Navigate to='/login' replace={true} />} />
         </Routes>
       )}
