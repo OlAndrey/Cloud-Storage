@@ -5,10 +5,11 @@ import Container from './AuthContainer'
 import TextInput from '../inputs/TextInput'
 import Icon from '../icon/Icon'
 import { IFormValues } from '../../types/form'
+import axios from '../../utils/axios'
 
 const RecoveryLink = () => {
-  const [loading] = useState(false)
-  const [emailErrors] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [emailErrors, setEmailErrors] = useState('')
   const [step, setStep] = useState(1)
 
   const {
@@ -22,9 +23,23 @@ const RecoveryLink = () => {
   const onSendEmail: SubmitHandler<IFormValues> = async (formData, e) => {
     e?.preventDefault()
     const { email } = formData
-    console.log(email)
 
-    if (!errors.email) setStep(2)  
+    if (!errors.email) {
+      try {
+        setLoading(true)
+        const data = await axios.post('/api/auth/reset-password', { email })
+        if (data) setEmailErrors('')
+        setStep(2)
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error: any) {
+        if (error.response && error.response.data.message)
+          return setEmailErrors(error.response.data.message)
+        return setEmailErrors(error.message)
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   return (
