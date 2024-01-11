@@ -16,6 +16,7 @@ import SideBar from './components/menu/SideBar'
 import Success from './components/success/Success'
 import Cancel from './components/cancel/Cancel'
 import RecoveryLink from './components/authorization/RecoveryLink'
+import Recovery from './components/authorization/Recovery'
 
 const App = () => {
   const { authCheck, userInfo } = useAppSelector((state) => state.auth)
@@ -58,6 +59,7 @@ const App = () => {
           <Route path='/login' element={<Login />} />
           <Route path='/registration' element={<Registry />} />
           <Route path='/recovery-link' element={<RecoveryLink />} />
+          <Route path='/reset/:id' element={<Recovery />}/>
           <Route path='/*' element={<Navigate to='/login' replace={true} />} />
         </Routes>
       )}
