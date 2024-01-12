@@ -7,6 +7,7 @@ import {
   editName,
   editPassword,
   loginUser,
+  recoveryPassword,
   registerUser,
 } from '../actions/authActions'
 
@@ -109,6 +110,25 @@ const authSlice = createSlice({
         state.userInfo = user
       })
       .addCase(editName.rejected, (state, action) => {
+        const errorMsg = action.payload ? action.payload : ''
+        state.loading = false
+        state.error = errorMsg as string
+      })
+
+    builder
+      .addCase(recoveryPassword.pending, (state) => {
+        state.loading = true
+        state.info = ''
+        state.error = ''
+      })
+      .addCase(recoveryPassword.fulfilled, (state, action) => {
+        const { user, token } = action.payload
+
+        state.loading = false
+        state.userInfo = user
+        state.userToken = token
+      })
+      .addCase(recoveryPassword.rejected, (state, action) => {
         const errorMsg = action.payload ? action.payload : ''
         state.loading = false
         state.error = errorMsg as string

@@ -9,7 +9,6 @@ export const registerUser = createAsyncThunk(
     try {
       const res = await axios.post('/api/auth/registration', { name, email, password })
 
-      window.localStorage.setItem('userToken', res.data.token)
       return res.data
     } catch (error: any) {
       if (error.response && error.response.data.message)
@@ -71,6 +70,22 @@ export const editPassword = createAsyncThunk(
   ) => {
     try {
       const res = await axios.put('/api/auth/password', { lastPassword, newPassword })
+
+      return res.data
+    } catch (error: any) {
+      if (error.response && error.response.data.message)
+        return rejectWithValue(error.response.data.message)
+      return rejectWithValue(error.message)
+    }
+  },
+)
+
+export const recoveryPassword = createAsyncThunk(
+  'auth/recovery',
+  async ({ id, password }: { id: string; password: string }, { rejectWithValue }) => {
+    try {
+      const res = await axios.post(`/api/auth/recovery/${id}`, { password })
+      window.localStorage.setItem('userToken', res.data.token)
 
       return res.data
     } catch (error: any) {

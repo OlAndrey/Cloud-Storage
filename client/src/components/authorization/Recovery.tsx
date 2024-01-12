@@ -5,10 +5,12 @@ import { IFormValues } from '../../types/form'
 import Icon from '../icon/Icon'
 import Container from './AuthContainer'
 import PasswordInput from '../inputs/PasswordInput'
-import { useAppSelector } from '../../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../../hooks/redux'
+import { recoveryPassword } from '../../store/actions/authActions'
 
 const Recovery = () => {
   const { loading, error } = useAppSelector((state) => state.auth)
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const { id } = useParams()
 
@@ -29,7 +31,7 @@ const Recovery = () => {
     e?.preventDefault()
     const { currentPassword } = formData
 
-    if (id) console.log(currentPassword )
+    if (id) dispatch(recoveryPassword({ id, password: currentPassword }))
   }
 
   return (
