@@ -23,7 +23,7 @@ const normalizeUserData = (user) => ({
 
 const register = async (req, res) => {
   try {
-    const { email } = req.body
+    const { name, email } = req.body
 
     try {
       const user = await User.findOne({ email })
@@ -36,6 +36,7 @@ const register = async (req, res) => {
         const uniqueStr = Uuid.v4()
         user.activationLink = uniqueStr
 
+        await userServices.sendActivationLink({ name, email, uniqueStr })
         await user.save()
         return res.status(200).json({
           message: 'Success'

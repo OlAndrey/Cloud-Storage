@@ -23,7 +23,7 @@ class UserServices {
         await fileServices.createDir(file)
         const recent = new Recent({ user: newUser._id })
 
-        await mailServices.sendActivationMail(email, uniqueStr, name)
+        await this.sendActivationLink({ name, email, uniqueStr })
         await recent.save()
         await newUser.save()
         resolve({ message: 'Success' })
@@ -64,6 +64,11 @@ class UserServices {
         reject(err)
       }
     })
+  }
+
+  sendActivationLink(user) {
+    const { email, uniqueStr, name } = user
+    return mailServices.sendActivationMail(email, uniqueStr, name)
   }
 
   getToken(userId) {
