@@ -4,7 +4,7 @@ import Modal from '../../../modal/Modal'
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux'
 import { IFormValues } from '../../../../types/form'
 import PasswordInput from '../../../inputs/PasswordInput'
-import { editPassword } from '../../../../store/reducers/authSlice'
+import { editPassword } from '../../../../store/actions/authActions'
 import Icon from '../../../icon/Icon'
 
 const ChangePassword = () => {

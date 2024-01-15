@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import FileItem from '../fileList/FileItem'
-import { searchFiles } from '../../store/reducers/filesSlice'
+import { searchFiles } from '../../store/actions/filesActions'
 import { useNavigate, useParams } from 'react-router-dom'
 import ComponentInCenter from '../componentInCenter'
 import Container from '../container'

@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import {
-  editFile,
-  getFilesFromDir,
-  moveToBasket,
-  setOrder,
-  setPopupDisplay,
-} from '../../store/reducers/driveSlice'
+import { setOrder, setPopupDisplay } from '../../store/reducers/driveSlice'
+import { editFile, getFilesFromDir, moveToBasket } from '../../store/actions/driveActions'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import Container from '../container'
 import { useDragDrop } from '../../hooks/dragDrop'

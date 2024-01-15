@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form'
 import TextInput from '../../../inputs/TextInput'
 import { IFormValues } from '../../../../types/form'
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux'
-import { editName } from '../../../../store/reducers/authSlice'
+import { editName } from '../../../../store/actions/authActions'
 import Modal from '../../../modal/Modal'
 
 const AccountDetails = () => {

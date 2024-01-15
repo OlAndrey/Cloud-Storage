@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../../../hooks/redux'
-import { changeAvatar } from '../../../../store/reducers/authSlice'
+import { changeAvatar } from '../../../../store/actions/authActions'
 import PictureAvatar from '../../../image/PictureAvatar'
 
 const UserHeader = () => {

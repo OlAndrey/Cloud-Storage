@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
-import { deleteFile, getFilesFromTrash, restoreFile } from '../../store/reducers/filesSlice'
+import { deleteFile, getFilesFromTrash, restoreFile } from '../../store/actions/filesActions'
 import Icon from '../icon/Icon'
 import FileItem from '../fileList/FileItem'
 import Container from '../container'
