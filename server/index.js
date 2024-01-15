@@ -12,6 +12,7 @@ const recentRoute = require('./routes/recent')
 const paymentRoute = require('./routes/payment')
 const Plan = require('./models/Plan')
 const { cloudinaryConfig } = require('./utils/cloudinaryConfig')
+const { activate } = require('./containers/authContainer')
 
 const app = express()
 app.use(
@@ -38,6 +39,7 @@ app.use('/api/auth', authRoute)
 app.use('/api/file', fileRoute)
 app.use('/api/recent', recentRoute)
 app.use('/api/v1', paymentRoute)
+app.get('/active/:link', activate)
 
 const port = process.env.PORT || 5001
 const server = http.createServer(app)

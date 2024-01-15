@@ -1,11 +1,7 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const User = require('../models/User')
-const File = require('../models/File')
-const fileServices = require('../services/fileServices')
-const Recent = require('../models/Recent')
-const { handlerDeleteFile } = require('./basketContainer')
 const { uploader } = require('../utils/cloudinaryConfig')
+const userServices = require('../services/userServices')
 
 const error = (req, res) => {
   res.status(500).json({
@@ -25,45 +21,53 @@ const normalizeUserData = (user) => ({
 
 const register = async (req, res) => {
   try {
-    const { name, email, password } = req.body
-
-    const salt = 5
-    const hash = await bcrypt.hash(password, salt)
-    const newUser = new User({ name, email, password: hash })
+    const { email } = req.body
 
     try {
-      const file = new File({ user: newUser._id, name: '' })
-      await fileServices.createDir(file)
-      const recent = new Recent({ user: newUser._id })
-      await recent.save()
+      const user = await User.findOne({ email })
 
-      try {
-        const user = await newUser.save()
-
-        const token = jwt.sign(
-          {
-            id: user._id
-          },
-          process.env.JWT_SECRET,
-          { expiresIn: '1d' }
-        )
-
-        res.status(200).json({
-          token,
-          user: normalizeUserData(user)
-        })
-      } catch (e) {
-        res.status(406).json({
-          error: e,
+      if (user.isActivated) {
+        return res.status(406).json({
           message: 'The email address is already in use by another account'
         })
+      } else {
+        const uniqueStr = Uuid.v4()
+        user.activationLink = uniqueStr
+
+        await user.save()
+        return res.status(200).json({
+          message: 'Success'
+        })
       }
-    } catch (error) {
-      res.status(500).json(error)
+    } catch (e) {
+      userServices
+        .registration(req.body)
+        .then((obj) => res.status(200).json(obj))
+        .catch((err) => res.status(500).json(err))
     }
   } catch (e) {
     console.log(e)
     error(req, res)
+  }
+}
+
+const activate = async (req, res) => {
+  try {
+    const activationLink = req.params.link
+    const user = await User.findOne({ activationLink })
+    if (Date.now() - Date.parse(user.updatedAt) < 1000 * 60 * 60 * 24) {
+      user.activationLink = ''
+      user.isActivated = true
+      await user.save()
+      return res.redirect(process.env.FRONT_END_HOST)
+    }
+
+    user.activationLink = ''
+    await user.save()
+    return res.send("<h1>The link has expired! Please register again.</h1>")
+  } catch (e) {
+    console.log(e)
+    res.send("<h1>The link is invalid!</h1>")
   }
 }
 
@@ -76,6 +80,12 @@ const login = async (req, res) => {
       return res.status(406).json({ message: 'Email or password is incorrect!!!' })
     }
 
+    if (!user.isActivated) {
+      return res.status(406).json({
+        message: 'Account is not activated!!!'
+      })
+    }
+
     const isPasswordCorrect = await bcrypt.compare(password, user.password)
     if (!isPasswordCorrect) {
       return res.status(406).json({
@@ -83,13 +93,7 @@ const login = async (req, res) => {
       })
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    const token = userServices.getToken(user._id)
     res.status(200).json({
       token,
       user: normalizeUserData(user)
@@ -109,13 +113,8 @@ const getMe = async (req, res) => {
       })
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: '1d' }
-    )
+    const token = userServices.getToken(user._id)
+
     res.status(200).json({
       token,
       user: normalizeUserData(user)
@@ -135,6 +134,37 @@ const editUserName = async (req, res) => {
     })
   } catch (err) {
     console.log(err)
+    error(req, res)
+  }
+}
+
+const resetPassword = async (req, res) => {
+  try {
+    const response = userServices.recovery(req.body)
+
+    return res.status(200).json({ response })
+  } catch (e) {
+    error(req, res)
+  }
+}
+
+const recoveryPassword = async (req, res) => {
+  try {
+    const { password } = req.body
+    console.log(password, req.params.userId)
+    const user = await User.findById(req.params.userId)
+
+    const salt = 5
+    const hash = await bcrypt.hash(password, salt)
+    user.password = hash
+    await user.save()
+
+    const token = userServices.getToken(user._id)
+    res.status(200).json({
+      token,
+      user: normalizeUserData(user)
+    })
+  } catch (e) {
     error(req, res)
   }
 }
@@ -163,24 +193,6 @@ const editPassword = async (req, res) => {
   }
 }
 
-const deleteAccount = async (req, res) => {
-  try {
-    const user = await User.findOne({ _id: req.userId })
-
-    const files = await File.find({ user: req.userId })
-
-    if (files.length) {
-      await Promise.all(files.map((file) => handlerDeleteFile(file._id, file.user)))
-    }
-
-    await user.deleteOne()
-    return res.status(200).json({ message: 'Success' })
-  } catch (err) {
-    console.log(err)
-    res.status(500).json(err)
-  }
-}
-
 const uploadAvatar = async (req, res) => {
   try {
     const file = req.files.file
@@ -189,7 +201,7 @@ const uploadAvatar = async (req, res) => {
     const result = await new Promise((resolve, reject) => {
       uploader
         .upload_stream((error, uploadResult) => {
-          if(error) reject(error)
+          if (error) reject(error)
           return resolve(uploadResult)
         })
         .end(file.data)
@@ -208,4 +220,21 @@ const uploadAvatar = async (req, res) => {
   }
 }
 
-module.exports = { register, login, getMe, editUserName, editPassword, deleteAccount, uploadAvatar }
+const deleteAccount = async (req, res) =>
+  userServices
+    .deleteUser(req.userId)
+    .then((obj) => res.status(200).json(obj))
+    .catch((err) => res.status(500).json(err))
+
+module.exports = {
+  register,
+  activate,
+  login,
+  getMe,
+  editUserName,
+  editPassword,
+  resetPassword,
+  recoveryPassword,
+  deleteAccount,
+  uploadAvatar
+}

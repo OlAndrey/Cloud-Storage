@@ -6,10 +6,6 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    avatarUrl: {
-      type: String,
-      default: 'https://res.cloudinary.com/dtpqmlah5/image/upload/v1703944135/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8_i1zqqo.jpg'
-    },
     email: {
       type: String,
       required: true,
@@ -18,6 +14,18 @@ const userSchema = mongoose.Schema(
     password: {
       type: String,
       required: true
+    },
+    isActivated: { 
+      type: Boolean,
+      default: false
+    },
+    activationLink: { 
+      type: String,
+      default: ''
+    },
+    avatarUrl: {
+      type: String,
+      default: 'https://res.cloudinary.com/dtpqmlah5/image/upload/v1703944135/360_F_229758328_7x8jwCwjtBMmC6rgFzLFhZoEpLobB6L8_i1zqqo.jpg'
     },
     diskSpace: {
       type: Number,
